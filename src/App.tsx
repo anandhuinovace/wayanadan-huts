@@ -16,9 +16,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <Layout> {/* Wrap the router with Layout */}
           <AppRouter /> {/* Use the router here */}
-        </Layout>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>

@@ -1,14 +1,13 @@
-import { ReactNode } from 'react';
-import Navbar from './Navbar';
 import Footer from './Footer';
 import { Outlet } from 'react-router-dom';
+import AdminNavbar from './AdminNavbar';
 
 
 
-const Layout = () => {
+const AdminLayout = () => {
   return (
     <div className="min-h-screen flex flex-col">
-      <Navbar />
+      <AdminNavbar />
     <main className="flex-grow">
       <Outlet />
     </main>
@@ -17,4 +16,4 @@ const Layout = () => {
   );
 };
 
-export default Layout;
+export default AdminLayout;

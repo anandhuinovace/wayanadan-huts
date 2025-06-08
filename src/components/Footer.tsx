@@ -2,9 +2,11 @@ import React from 'react';
 import { Home, Phone, Mail, MapPin, Instagram, Facebook, Twitter, Youtube } from 'lucide-react';
 import { Button } from './ui/button';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
+  const navigate = useNavigate();
 
   return (
     <footer className="bg-gradient-to-b from-emerald-900 to-emerald-950 text-white">
@@ -168,7 +170,7 @@ const Footer = () => {
                 </a>
               </li>
             </ul>
-            <Button className="mt-6 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white shadow-lg transition-all hover:shadow-xl">
+            <Button onClick={() => navigate("/admin/login")} className="mt-6 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white shadow-lg transition-all hover:shadow-xl">
               Login
             </Button>
           </div>

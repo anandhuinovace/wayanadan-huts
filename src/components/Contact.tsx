@@ -1,42 +1,79 @@
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Calendar, MapPin, Tent, Mail, Phone, User } from 'lucide-react';
-import { motion } from 'framer-motion';
-
+import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Calendar, MapPin, Tent, Mail, Phone, User } from "lucide-react";
+import { motion } from "framer-motion";
+import { collection, addDoc, getDocs } from "firebase/firestore";
+import { db } from "@/firebase"; // adjust the path as needed
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 const Contact = () => {
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    accommodation: '',
-    checkIn: '',
-    checkOut: '',
-    guests: '1',
-    message: '',
+    name: "",
+    email: "",
+    phone: "",
+    accommodation: "",
+    checkIn: null as Date | null,
+    checkOut: null as Date | null,
+    guests: "1",
+    message: "",
+    status: "New",
   });
 
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [bookedDates, setBookedDates] = useState<Date[]>([]);
+  const [checkIn, setCheckIn] = useState<Date | null>(null);
+  const [checkOut, setCheckOut] = useState<Date | null>(null);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  useEffect(() => {
+    const fetchBookedDates = async () => {
+      if (!formData.accommodation) return;
+
+      const snapshot = await getDocs(collection(db, "booked_dates"));
+      const filtered = snapshot.docs
+        .map((doc) => doc.data())
+        .filter((entry) => entry.cottage === formData.accommodation)
+        .map((entry) => new Date(entry.date));
+
+      setBookedDates(filtered);
+    };
+
+    fetchBookedDates();
+  }, [formData.accommodation]);
+
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitted(true);
 
-    // Reset form
-    setFormData({
-      name: '',
-      email: '',
-      phone: '',
-      accommodation: '',
-      checkIn: '',
-      checkOut: '',
-      guests: '1',
-      message: '',
-    });
+    try {
+      await addDoc(collection(db, "contact_submissions"), {
+        ...formData,
+        timestamp: new Date(),
+      });
+
+      // Reset form
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        accommodation: "",
+        checkIn: null as Date | null,
+        checkOut: null as Date | null,
+        guests: "1",
+        message: "",
+        status: "New",
+      });
+    } catch (error) {
+      console.error("Error saving to Firebase:", error);
+    }
 
     // Reset submission status after 5 seconds
     setTimeout(() => setIsSubmitted(false), 5000);
@@ -48,9 +85,9 @@ const Contact = () => {
       opacity: 1,
       transition: {
         staggerChildren: 0.1,
-        delayChildren: 0.2
-      }
-    }
+        delayChildren: 0.2,
+      },
+    },
   };
 
   const itemVariants = {
@@ -59,13 +96,16 @@ const Contact = () => {
       y: 0,
       opacity: 1,
       transition: {
-        duration: 0.5
-      }
-    }
+        duration: 0.5,
+      },
+    },
   };
 
   return (
-    <section id="contact" className="py-20 bg-gradient-to-b from-emerald-50 to-white">
+    <section
+      id="contact"
+      className="py-20 bg-gradient-to-b from-emerald-50 to-white"
+    >
       <div className="container mx-auto px-4 md:px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -80,7 +120,8 @@ const Contact = () => {
             Plan Your <span className="text-emerald-600">Nature Escape</span>
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Fill out the form below and our team will help you craft the perfect Wayanad experience.
+            Fill out the form below and our team will help you craft the perfect
+            Wayanad experience.
           </p>
         </motion.div>
 
@@ -92,97 +133,137 @@ const Contact = () => {
           className="flex flex-col lg:flex-row gap-8"
         >
           {/* Contact Info Card */}
-          <motion.div
-            variants={itemVariants}
-            className="lg:w-1/3"
-          >
+          <motion.div variants={itemVariants} className="lg:w-1/3">
             <div className="bg-white p-8 rounded-2xl shadow-lg border border-emerald-100 hover:shadow-xl transition-all duration-300 h-full">
-              <h3 className="text-2xl font-bold text-gray-900 mb-6 pb-4 border-b border-emerald-100">Our Details</h3>
+              <h3 className="text-2xl font-bold text-gray-900 mb-6 pb-4 border-b border-emerald-100">
+                Our Details
+              </h3>
 
               <div className="space-y-6">
-                <motion.div
-                  whileHover={{ x: 5 }}
-                  className="flex items-start"
-                >
+                <motion.div whileHover={{ x: 5 }} className="flex items-start">
                   <div className="bg-emerald-100 p-3 rounded-lg mr-4">
                     <MapPin className="w-5 h-5 text-emerald-600" />
                   </div>
                   <div>
                     <h4 className="font-bold text-gray-800 mb-1">Location</h4>
                     <p className="text-gray-600">
-                      Kunthani, Sultan Bathery,<br /> Kerala 673592
+                      Kunthani, Sultan Bathery,
+                      <br /> Kerala 673592
                     </p>
                   </div>
                 </motion.div>
 
-                <motion.div
-                  whileHover={{ x: 5 }}
-                  className="flex items-start"
-                >
+                <motion.div whileHover={{ x: 5 }} className="flex items-start">
                   <div className="bg-emerald-100 p-3 rounded-lg mr-4">
                     <Phone className="w-5 h-5 text-emerald-600" />
                   </div>
                   <div>
                     <h4 className="font-bold text-gray-800 mb-1">Call Us</h4>
-                    <a href="tel:+919876543210" className="text-emerald-600 hover:text-emerald-700 transition-colors">
+                    <a
+                      href="tel:+919876543210"
+                      className="text-emerald-600 hover:text-emerald-700 transition-colors"
+                    >
                       +91 82819 00530 , +91 95395 69263
                     </a>
                   </div>
                 </motion.div>
 
-                <motion.div
-                  whileHover={{ x: 5 }}
-                  className="flex items-start"
-                >
+                <motion.div whileHover={{ x: 5 }} className="flex items-start">
                   <div className="bg-emerald-100 p-3 rounded-lg mr-4">
                     <Mail className="w-5 h-5 text-emerald-600" />
                   </div>
                   <div>
                     <h4 className="font-bold text-gray-800 mb-1">Email Us</h4>
-                    <a href="mailto:wayanadanhuts@gmail.com" className="text-emerald-600 hover:text-emerald-700 transition-colors">
+                    <a
+                      href="mailto:wayanadanhuts@gmail.com"
+                      className="text-emerald-600 hover:text-emerald-700 transition-colors"
+                    >
                       wayanadanhuts@gmail.com
                     </a>
                   </div>
                 </motion.div>
 
-                <motion.div
-                  whileHover={{ x: 5 }}
-                  className="flex items-start"
-                >
+                <motion.div whileHover={{ x: 5 }} className="flex items-start">
                   <div className="bg-emerald-100 p-3 rounded-lg mr-4">
                     <Tent className="w-5 h-5 text-emerald-600" />
                   </div>
                   <div>
-                    <h4 className="font-bold text-gray-800 mb-1">Accommodations</h4>
+                    <h4 className="font-bold text-gray-800 mb-1">
+                      Accommodations
+                    </h4>
                     <p className="text-gray-600">
-                      Wayanadan Huts Home Stay, Wayanad
-                      Two BHK(A/C) Home Stay @ Bathery
-                      Include Kitchen, Dining Hall, Balcony &
-                      Fully Furnushed 2 BHK units also available as 1 BHK on request
+                      Wayanadan Huts Home Stay, Wayanad Two BHK(A/C) Home Stay @
+                      Bathery Include Kitchen, Dining Hall, Balcony & Fully
+                      Furnushed 2 BHK units also available as 1 BHK on request
                     </p>
                   </div>
                 </motion.div>
               </div>
 
               <div className="mt-8 pt-6 border-t border-emerald-100">
-                <h4 className="font-bold text-gray-800 mb-4">Follow Our Journey</h4>
+                <h4 className="font-bold text-gray-800 mb-4">
+                  Follow Our Journey
+                </h4>
                 <div className="flex space-x-3">
                   {[
                     {
-                      icon: <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>,
+                      icon: (
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="20"
+                          height="20"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+                        </svg>
+                      ),
                       label: "Facebook",
-                      url: "https://www.facebook.com/share/1Aseg7MPte/"
+                      url: "https://www.facebook.com/share/1Aseg7MPte/",
                     },
                     {
-                      icon: <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>,
+                      icon: (
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="20"
+                          height="20"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <rect
+                            x="2"
+                            y="2"
+                            width="20"
+                            height="20"
+                            rx="5"
+                            ry="5"
+                          ></rect>
+                          <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                          <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                        </svg>
+                      ),
                       label: "Instagram",
-                      url: "https://www.instagram.com/shibinvarghese1990?igsh=MXBucjRtNWIyNmZ5aw=="
+                      url: "https://www.instagram.com/shibinvarghese1990?igsh=MXBucjRtNWIyNmZ5aw==",
                     },
                     {
                       icon: (
                         <a href="https://wa.me/919645682968" target="_blank">
                           <div>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 32 32" fill="none">
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="24"
+                              height="24"
+                              viewBox="0 0 32 32"
+                              fill="none"
+                            >
                               <path
                                 fillRule="evenodd"
                                 clipRule="evenodd"
@@ -204,7 +285,14 @@ const Contact = () => {
                                 fill="white"
                               />
                               <defs>
-                                <linearGradient id="paint0_linear_87_7264" x1="26.5" y1="7" x2="4" y2="28" gradientUnits="userSpaceOnUse">
+                                <linearGradient
+                                  id="paint0_linear_87_7264"
+                                  x1="26.5"
+                                  y1="7"
+                                  x2="4"
+                                  y2="28"
+                                  gradientUnits="userSpaceOnUse"
+                                >
                                   <stop stopColor="#5BD066" />
                                   <stop offset="1" stopColor="#27B43E" />
                                 </linearGradient>
@@ -213,10 +301,7 @@ const Contact = () => {
                           </div>
                         </a>
                       ),
-
-                    }
-
-
+                    },
                   ].map((social, index) => (
                     <motion.a
                       key={index}
@@ -236,11 +321,11 @@ const Contact = () => {
           </motion.div>
 
           {/* Booking Form */}
-          <motion.div
-            variants={itemVariants}
-            className="lg:w-2/3"
-          >
-            <form onSubmit={handleSubmit} className="bg-white p-8 rounded-2xl shadow-lg border border-emerald-100 relative overflow-hidden">
+          <motion.div variants={itemVariants} className="lg:w-2/3">
+            <form
+              onSubmit={handleSubmit}
+              className="bg-white p-8 rounded-2xl shadow-lg border border-emerald-100 relative overflow-hidden"
+            >
               {/* Success Message */}
               {isSubmitted && (
                 <motion.div
@@ -249,12 +334,28 @@ const Contact = () => {
                   className="absolute inset-0 bg-emerald-50/95 backdrop-blur-sm flex flex-col items-center justify-center z-10 p-8 text-center"
                 >
                   <div className="bg-emerald-100 p-4 rounded-full mb-6">
-                    <svg className="w-12 h-12 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+                    <svg
+                      className="w-12 h-12 text-emerald-600"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M5 13l4 4L19 7"
+                      ></path>
                     </svg>
                   </div>
-                  <h3 className="text-2xl font-bold text-gray-900 mb-2">Thank You!</h3>
-                  <p className="text-gray-600 mb-6">We've received your inquiry and will get back to you within 24 hours.</p>
+                  <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                    Thank You!
+                  </h3>
+                  <p className="text-gray-600 mb-6">
+                    We've received your inquiry and will get back to you within
+                    24 hours.
+                  </p>
                   <Button
                     onClick={() => setIsSubmitted(false)}
                     className="bg-emerald-600 hover:bg-emerald-700 text-white"
@@ -264,13 +365,19 @@ const Contact = () => {
                 </motion.div>
               )}
 
-              <h3 className="text-2xl font-bold text-gray-900 mb-6 pb-4 border-b border-emerald-100">Booking Inquiry</h3>
+              <h3 className="text-2xl font-bold text-gray-900 mb-6 pb-4 border-b border-emerald-100">
+                Booking Inquiry
+              </h3>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Name Field */}
                 <motion.div whileHover={{ scale: 1.01 }}>
-                  <label htmlFor="name" className="block text-gray-700 font-medium mb-2 flex items-center">
-                    <User className="w-4 h-4 mr-2 text-emerald-600" /> Your Name *
+                  <label
+                    htmlFor="name"
+                    className="block text-gray-700 font-medium mb-2 flex items-center"
+                  >
+                    <User className="w-4 h-4 mr-2 text-emerald-600" /> Your Name
+                    *
                   </label>
                   <div className="relative">
                     <input
@@ -288,7 +395,10 @@ const Contact = () => {
 
                 {/* Email Field */}
                 <motion.div whileHover={{ scale: 1.01 }}>
-                  <label htmlFor="email" className="block text-gray-700 font-medium mb-2 flex items-center">
+                  <label
+                    htmlFor="email"
+                    className="block text-gray-700 font-medium mb-2 flex items-center"
+                  >
                     <Mail className="w-4 h-4 mr-2 text-emerald-600" /> Email *
                   </label>
                   <div className="relative">
@@ -307,7 +417,10 @@ const Contact = () => {
 
                 {/* Phone Field */}
                 <motion.div whileHover={{ scale: 1.01 }}>
-                  <label htmlFor="phone" className="block text-gray-700 font-medium mb-2 flex items-center">
+                  <label
+                    htmlFor="phone"
+                    className="block text-gray-700 font-medium mb-2 flex items-center"
+                  >
                     <Phone className="w-4 h-4 mr-2 text-emerald-600" /> Phone *
                   </label>
                   <div className="relative">
@@ -326,7 +439,12 @@ const Contact = () => {
 
                 {/* Accommodation Field */}
                 <motion.div whileHover={{ scale: 1.01 }}>
-                  <label htmlFor="accommodation" className="block text-gray-700 font-medium mb-2">Accommodation *</label>
+                  <label
+                    htmlFor="accommodation"
+                    className="block text-gray-700 font-medium mb-2"
+                  >
+                    Accommodation *
+                  </label>
                   <div className="relative">
                     <select
                       id="accommodation"
@@ -337,13 +455,28 @@ const Contact = () => {
                       className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent appearance-none bg-white"
                     >
                       <option value="">Select accommodation</option>
-                      <option value="Bamboo Tree House">Bamboo Tree House</option>
+                      <option value="Bamboo Tree House">
+                        Bamboo Tree House
+                      </option>
                       <option value="Eco Mud Cottage">Eco Mud Cottage</option>
-                      <option value="Luxury Safari Tent">Luxury Safari Tent</option>
+                      <option value="Luxury Safari Tent">
+                        Luxury Safari Tent
+                      </option>
                     </select>
                     <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                      <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
+                      <svg
+                        className="w-5 h-5 text-gray-400"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M19 9l-7 7-7-7"
+                        ></path>
                       </svg>
                     </div>
                   </div>
@@ -351,41 +484,58 @@ const Contact = () => {
 
                 {/* Check-in Date */}
                 <motion.div whileHover={{ scale: 1.01 }}>
-                  <label htmlFor="checkIn" className="block text-gray-700 font-medium mb-2">Check-in *</label>
+                  <label
+                    htmlFor="checkIn"
+                    className="block text-gray-700 font-medium mb-2"
+                  >
+                    Check-in *
+                  </label>
                   <div className="relative">
-                    <input
-                      type="date"
-                      id="checkIn"
-                      name="checkIn"
-                      required
-                      value={formData.checkIn}
-                      onChange={handleChange}
-                      className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent appearance-none bg-white"
+                    <DatePicker
+                      selected={formData.checkIn}
+                      onChange={(date: Date | null) =>
+                        setFormData({ ...formData, checkIn: date })
+                      }
+                      minDate={new Date()}
+                      excludeDates={bookedDates}
+                      dateFormat="yyyy-MM-dd"
+                      className="w-full px-4 py-3 border border-gray-200 rounded-xl"
+                      placeholderText="Select check-in date"
                     />
-                    <Calendar className="absolute right-4 top-3.5 w-5 h-5 text-gray-400 pointer-events-none" />
                   </div>
                 </motion.div>
 
                 {/* Check-out Date */}
                 <motion.div whileHover={{ scale: 1.01 }}>
-                  <label htmlFor="checkOut" className="block text-gray-700 font-medium mb-2">Check-out *</label>
+                  <label
+                    htmlFor="checkOut"
+                    className="block text-gray-700 font-medium mb-2"
+                  >
+                    Check-out *
+                  </label>
                   <div className="relative">
-                    <input
-                      type="date"
-                      id="checkOut"
-                      name="checkOut"
-                      required
-                      value={formData.checkOut}
-                      onChange={handleChange}
-                      className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent appearance-none bg-white"
+                    <DatePicker
+                      selected={formData.checkOut}
+                      onChange={(date: Date | null) =>
+                        setFormData({ ...formData, checkOut: date })
+                      }
+                      minDate={formData.checkIn || new Date()}
+                      excludeDates={bookedDates}
+                      dateFormat="yyyy-MM-dd"
+                      className="w-full px-4 py-3 border border-gray-200 rounded-xl"
+                      placeholderText="Select check-out date"
                     />
-                    <Calendar className="absolute right-4 top-3.5 w-5 h-5 text-gray-400 pointer-events-none" />
                   </div>
                 </motion.div>
 
                 {/* Guests Field */}
                 <motion.div whileHover={{ scale: 1.01 }}>
-                  <label htmlFor="guests" className="block text-gray-700 font-medium mb-2">Guests *</label>
+                  <label
+                    htmlFor="guests"
+                    className="block text-gray-700 font-medium mb-2"
+                  >
+                    Guests *
+                  </label>
                   <div className="relative">
                     <select
                       id="guests"
@@ -397,13 +547,24 @@ const Contact = () => {
                     >
                       {[1, 2, 3, 4, 5, 6].map((num) => (
                         <option key={num} value={num.toString()}>
-                          {num} {num === 1 ? 'Guest' : 'Guests'}
+                          {num} {num === 1 ? "Guest" : "Guests"}
                         </option>
                       ))}
                     </select>
                     <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                      <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
+                      <svg
+                        className="w-5 h-5 text-gray-400"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M19 9l-7 7-7-7"
+                        ></path>
                       </svg>
                     </div>
                   </div>
@@ -412,7 +573,12 @@ const Contact = () => {
 
               {/* Message Field */}
               <motion.div whileHover={{ scale: 1.01 }} className="mt-6">
-                <label htmlFor="message" className="block text-gray-700 font-medium mb-2">Special Requests</label>
+                <label
+                  htmlFor="message"
+                  className="block text-gray-700 font-medium mb-2"
+                >
+                  Special Requests
+                </label>
                 <textarea
                   id="message"
                   name="message"
