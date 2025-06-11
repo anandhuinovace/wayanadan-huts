@@ -158,11 +158,11 @@ const About = () => {
               </div>
 
               {/* CTA Button */}
-              <div className="scroll-animate" style={{ animationDelay: '0.5s' }}>
+              {/* <div className="scroll-animate" style={{ animationDelay: '0.5s' }}>
                 <button className="mt-6 px-8 py-3 bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-medium rounded-full shadow-lg hover:shadow-xl transition-all hover:scale-105">
                   View More
                 </button>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>

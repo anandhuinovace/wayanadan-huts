@@ -69,7 +69,7 @@ const Navbar = () => {
             { id: 'experiences', label: 'Menus', to: '/menu' },
             { id: 'media', label: 'Media', to: '/media' },
             { id: 'testimonials', label: 'Testimonials', to: '#testimonials' },
-            { id: 'contact', label: 'Contact', to: '#contact' },
+            { id: 'contact', label: 'Contact', to: '#accommodations' },
           ].map((item) => (
             <Link 
               key={item.id}

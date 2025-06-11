@@ -3,9 +3,10 @@ import { Button } from "@/components/ui/button";
 import { Calendar, MapPin, Tent, Mail, Phone, User } from "lucide-react";
 import { motion } from "framer-motion";
 import { collection, addDoc, getDocs } from "firebase/firestore";
-import { db } from "@/firebase"; // adjust the path as needed
+import { db } from "@/firebase";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+
 const Contact = () => {
   const [formData, setFormData] = useState({
     name: "",
@@ -14,6 +15,8 @@ const Contact = () => {
     accommodation: "",
     checkIn: null as Date | null,
     checkOut: null as Date | null,
+    adults: "1",
+    children: "0",
     guests: "1",
     message: "",
     status: "New",
@@ -21,8 +24,11 @@ const Contact = () => {
 
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [bookedDates, setBookedDates] = useState<Date[]>([]);
-  const [checkIn, setCheckIn] = useState<Date | null>(null);
-  const [checkOut, setCheckOut] = useState<Date | null>(null);
+
+  useEffect(() => {
+    const totalGuests = parseInt(formData.adults) + parseInt(formData.children);
+    setFormData(prev => ({ ...prev, guests: totalGuests.toString() }));
+  }, [formData.adults, formData.children]);
 
   useEffect(() => {
     const fetchBookedDates = async () => {
@@ -59,14 +65,15 @@ const Contact = () => {
         timestamp: new Date(),
       });
 
-      // Reset form
       setFormData({
         name: "",
         email: "",
         phone: "",
         accommodation: "",
-        checkIn: null as Date | null,
-        checkOut: null as Date | null,
+        checkIn: null,
+        checkOut: null,
+        adults: "1",
+        children: "0",
         guests: "1",
         message: "",
         status: "New",
@@ -75,7 +82,6 @@ const Contact = () => {
       console.error("Error saving to Firebase:", error);
     }
 
-    // Reset submission status after 5 seconds
     setTimeout(() => setIsSubmitted(false), 5000);
   };
 
@@ -132,7 +138,6 @@ const Contact = () => {
           viewport={{ once: true }}
           className="flex flex-col lg:flex-row gap-8"
         >
-          {/* Contact Info Card */}
           <motion.div variants={itemVariants} className="lg:w-1/3">
             <div className="bg-white p-8 rounded-2xl shadow-lg border border-emerald-100 hover:shadow-xl transition-all duration-300 h-full">
               <h3 className="text-2xl font-bold text-gray-900 mb-6 pb-4 border-b border-emerald-100">
@@ -267,7 +272,7 @@ const Contact = () => {
                               <path
                                 fillRule="evenodd"
                                 clipRule="evenodd"
-                                d="M16 31C23.732 31 30 24.732 30 17C30 9.26801 23.732 3 16 3C8.26801 3 2 9.26801 2 17C2 19.5109 2.661 21.8674 3.81847 23.905L2 31L9.31486 29.3038C11.3014 30.3854 13.5789 31 16 31ZM16 28.8462C22.5425 28.8462 27.8462 23.5425 27.8462 17C27.8462 10.4576 22.5425 5.15385 16 5.15385C9.45755 5.15385 4.15385 10.4576 4.15385 17C4.15385 19.5261 4.9445 21.8675 6.29184 23.7902L5.23077 27.7692L9.27993 26.7569C11.1894 28.0746 13.5046 28.8462 16 28.8462Z"
+                                d="M16 31C23.732 31 30 24.732 30 17C30 9.26801 23.732 3 16 3C8.26801 3 2 9.26801 2 17C2 19.5109 2.661 21.8674 3.81847 23.905L2 31L9.31486 29.3038C11.3014 30.3854 13.5789 31 16 31ZM16 28.8462C22.5425 28.8462 27.8462 23.5425 27.8462 17C27.8462 10.4576 22.5425 5.15385 16 5.15385C9.45755 5.15385 4.15385 10.4576 4.15385 17C4.15385 19.5261 4.9445 21.8675 6.29184 23.7902L5.23077 27.7692L9.27993 26.7569C11.1894 27.0746 13.5046 28.8462 16 28.8462Z"
                                 fill="#BFC8D0"
                               />
                               <path
@@ -320,18 +325,16 @@ const Contact = () => {
             </div>
           </motion.div>
 
-          {/* Booking Form */}
           <motion.div variants={itemVariants} className="lg:w-2/3">
             <form
               onSubmit={handleSubmit}
               className="bg-white p-8 rounded-2xl shadow-lg border border-emerald-100 relative overflow-hidden"
             >
-              {/* Success Message */}
               {isSubmitted && (
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="absolute inset-0 bg-emerald-50/95 backdrop-blur-sm flex flex-col items-center justify-center z-10 p-8 text-center"
+                  className="absolute inset-0 bg-emerald-50/95 backdrop-blur-sm flex flex-col items-center justify-center z-10 p-8 text-center z-[999] "
                 >
                   <div className="bg-emerald-100 p-4 rounded-full mb-6">
                     <svg
@@ -370,7 +373,6 @@ const Contact = () => {
               </h3>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Name Field */}
                 <motion.div whileHover={{ scale: 1.01 }}>
                   <label
                     htmlFor="name"
@@ -393,7 +395,6 @@ const Contact = () => {
                   </div>
                 </motion.div>
 
-                {/* Email Field */}
                 <motion.div whileHover={{ scale: 1.01 }}>
                   <label
                     htmlFor="email"
@@ -415,7 +416,6 @@ const Contact = () => {
                   </div>
                 </motion.div>
 
-                {/* Phone Field */}
                 <motion.div whileHover={{ scale: 1.01 }}>
                   <label
                     htmlFor="phone"
@@ -437,7 +437,6 @@ const Contact = () => {
                   </div>
                 </motion.div>
 
-                {/* Accommodation Field */}
                 <motion.div whileHover={{ scale: 1.01 }}>
                   <label
                     htmlFor="accommodation"
@@ -455,13 +454,8 @@ const Contact = () => {
                       className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent appearance-none bg-white"
                     >
                       <option value="">Select accommodation</option>
-                      <option value="Bamboo Tree House">
-                        Bamboo Tree House
-                      </option>
-                      <option value="Eco Mud Cottage">Eco Mud Cottage</option>
-                      <option value="Luxury Safari Tent">
-                        Luxury Safari Tent
-                      </option>
+                      <option value="1 bhk">1 BHK </option>
+                      <option value="2 bhk">2 BHK</option>
                     </select>
                     <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
                       <svg
@@ -482,15 +476,14 @@ const Contact = () => {
                   </div>
                 </motion.div>
 
-                {/* Check-in Date */}
-                <motion.div whileHover={{ scale: 1.01 }}>
+                <motion.div whileHover={{ scale: 1.01 }} className="z-50 relative">
                   <label
                     htmlFor="checkIn"
                     className="block text-gray-700 font-medium mb-2"
                   >
                     Check-in *
                   </label>
-                  <div className="relative">
+                  <div className="relative z-50">
                     <DatePicker
                       selected={formData.checkIn}
                       onChange={(date: Date | null) =>
@@ -499,21 +492,21 @@ const Contact = () => {
                       minDate={new Date()}
                       excludeDates={bookedDates}
                       dateFormat="yyyy-MM-dd"
-                      className="w-full px-4 py-3 border border-gray-200 rounded-xl"
                       placeholderText="Select check-in date"
+                      className="w-full px-4 py-3 border border-gray-200 rounded-xl"
+                      popperClassName="z-50"
                     />
                   </div>
                 </motion.div>
 
-                {/* Check-out Date */}
-                <motion.div whileHover={{ scale: 1.01 }}>
+                <motion.div whileHover={{ scale: 1.01 }} className="z-50 relative">
                   <label
                     htmlFor="checkOut"
                     className="block text-gray-700 font-medium mb-2"
                   >
                     Check-out *
                   </label>
-                  <div className="relative">
+                  <div className="relative z-50">
                     <DatePicker
                       selected={formData.checkOut}
                       onChange={(date: Date | null) =>
@@ -522,32 +515,32 @@ const Contact = () => {
                       minDate={formData.checkIn || new Date()}
                       excludeDates={bookedDates}
                       dateFormat="yyyy-MM-dd"
-                      className="w-full px-4 py-3 border border-gray-200 rounded-xl"
                       placeholderText="Select check-out date"
+                      className="w-full px-4 py-3 border border-gray-200 rounded-xl"
+                      popperClassName="z-50"
                     />
                   </div>
                 </motion.div>
 
-                {/* Guests Field */}
-                <motion.div whileHover={{ scale: 1.01 }}>
+                <motion.div whileHover={{ scale: 1.01 }} className="relative z-10">
                   <label
-                    htmlFor="guests"
+                    htmlFor="adults"
                     className="block text-gray-700 font-medium mb-2"
                   >
-                    Guests *
+                    Adults *
                   </label>
                   <div className="relative">
                     <select
-                      id="guests"
-                      name="guests"
+                      id="adults"
+                      name="adults"
                       required
-                      value={formData.guests}
+                      value={formData.adults}
                       onChange={handleChange}
                       className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent appearance-none bg-white"
                     >
                       {[1, 2, 3, 4, 5, 6].map((num) => (
-                        <option key={num} value={num.toString()}>
-                          {num} {num === 1 ? "Guest" : "Guests"}
+                        <option key={`adult-${num}`} value={num.toString()}>
+                          {num} {num === 1 ? "Adult" : "Adults"}
                         </option>
                       ))}
                     </select>
@@ -569,9 +562,58 @@ const Contact = () => {
                     </div>
                   </div>
                 </motion.div>
+
+                <motion.div whileHover={{ scale: 1.01 }} className="relative z-10">
+                  <label
+                    htmlFor="children"
+                    className="block text-gray-700 font-medium mb-2"
+                  >
+                    Children
+                  </label>
+                  <div className="relative">
+                    <select
+                      id="children"
+                      name="children"
+                      value={formData.children}
+                      onChange={handleChange}
+                      className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent appearance-none bg-white"
+                    >
+                      {[0, 1, 2, 3, 4, 5, 6].map((num) => (
+                        <option key={`child-${num}`} value={num.toString()}>
+                          {num} {num === 1 ? "Child" : "Children"}
+                        </option>
+                      ))}
+                    </select>
+                    <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                      <svg
+                        className="w-5 h-5 text-gray-400"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M19 9l-7 7-7-7"
+                        ></path>
+                      </svg>
+                    </div>
+                  </div>
+                </motion.div>
+
+                <motion.div whileHover={{ scale: 1.01 }}>
+                  <label className="block text-gray-700 font-medium mb-2">
+                    Total Guests
+                  </label>
+                  <div className="w-full px-4 py-3 border border-gray-200 rounded-xl bg-gray-50">
+                    {formData.guests} {parseInt(formData.guests) === 1 ? "Guest" : "Guests"}
+                    <input type="hidden" name="guests" value={formData.guests} />
+                  </div>
+                </motion.div>
               </div>
 
-              {/* Message Field */}
               <motion.div whileHover={{ scale: 1.01 }} className="mt-6">
                 <label
                   htmlFor="message"
@@ -590,7 +632,6 @@ const Contact = () => {
                 ></textarea>
               </motion.div>
 
-              {/* Submit Button */}
               <motion.div
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
