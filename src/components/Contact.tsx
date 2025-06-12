@@ -6,6 +6,7 @@ import { collection, addDoc, getDocs } from "firebase/firestore";
 import { db } from "@/firebase";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import emailjs from "emailjs-com";
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -27,7 +28,7 @@ const Contact = () => {
 
   useEffect(() => {
     const totalGuests = parseInt(formData.adults) + parseInt(formData.children);
-    setFormData(prev => ({ ...prev, guests: totalGuests.toString() }));
+    setFormData((prev) => ({ ...prev, guests: totalGuests.toString() }));
   }, [formData.adults, formData.children]);
 
   useEffect(() => {
@@ -60,6 +61,13 @@ const Contact = () => {
     setIsSubmitted(true);
 
     try {
+      await emailjs.send(
+        "service_k7jpzi8",
+        "template_fe0hq7h",
+        formData,
+        "_1blvD_Ac7uPq_Cfb"
+      );
+
       await addDoc(collection(db, "contact_submissions"), {
         ...formData,
         timestamp: new Date(),
@@ -476,7 +484,10 @@ const Contact = () => {
                   </div>
                 </motion.div>
 
-                <motion.div whileHover={{ scale: 1.01 }} className="z-50 relative">
+                <motion.div
+                  whileHover={{ scale: 1.01 }}
+                  className="z-50 relative"
+                >
                   <label
                     htmlFor="checkIn"
                     className="block text-gray-700 font-medium mb-2"
@@ -499,7 +510,10 @@ const Contact = () => {
                   </div>
                 </motion.div>
 
-                <motion.div whileHover={{ scale: 1.01 }} className="z-50 relative">
+                <motion.div
+                  whileHover={{ scale: 1.01 }}
+                  className="z-50 relative"
+                >
                   <label
                     htmlFor="checkOut"
                     className="block text-gray-700 font-medium mb-2"
@@ -522,7 +536,10 @@ const Contact = () => {
                   </div>
                 </motion.div>
 
-                <motion.div whileHover={{ scale: 1.01 }} className="relative z-10">
+                <motion.div
+                  whileHover={{ scale: 1.01 }}
+                  className="relative z-10"
+                >
                   <label
                     htmlFor="adults"
                     className="block text-gray-700 font-medium mb-2"
@@ -563,7 +580,10 @@ const Contact = () => {
                   </div>
                 </motion.div>
 
-                <motion.div whileHover={{ scale: 1.01 }} className="relative z-10">
+                <motion.div
+                  whileHover={{ scale: 1.01 }}
+                  className="relative z-10"
+                >
                   <label
                     htmlFor="children"
                     className="block text-gray-700 font-medium mb-2"
@@ -608,8 +628,13 @@ const Contact = () => {
                     Total Guests
                   </label>
                   <div className="w-full px-4 py-3 border border-gray-200 rounded-xl bg-gray-50">
-                    {formData.guests} {parseInt(formData.guests) === 1 ? "Guest" : "Guests"}
-                    <input type="hidden" name="guests" value={formData.guests} />
+                    {formData.guests}{" "}
+                    {parseInt(formData.guests) === 1 ? "Guest" : "Guests"}
+                    <input
+                      type="hidden"
+                      name="guests"
+                      value={formData.guests}
+                    />
                   </div>
                 </motion.div>
               </div>

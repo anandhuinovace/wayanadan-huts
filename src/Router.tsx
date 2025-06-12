@@ -10,6 +10,7 @@ import { ProtectedRoute } from "./pages/components/ProtectedRoute";
 import Layout from "@/components/UserLayout";
 import AdminLayout from "./components/AdminLayout";
 import AdminEnquirires from "./pages/AdminEnquiries";
+import AdminRatings from "./pages/AdminRatings";
 
 export const AppRouter = () => {
   return (
@@ -34,6 +35,7 @@ export const AppRouter = () => {
       >
         <Route path="/dashboard" element={<AdminDashboard />} />
         <Route path="/enquiries" element={<AdminEnquirires />} />
+        <Route path="/ratings" element={<AdminRatings />} />
       </Route>
 
       {/* Not Found route - optionally inside UserLayout */}

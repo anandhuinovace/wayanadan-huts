@@ -12,6 +12,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Star, Plus } from "lucide-react";
 import { motion } from "framer-motion";
+import { addDoc, collection } from "firebase/firestore";
+import { db } from "./firebase";
 
 const queryClient = new QueryClient();
 
@@ -87,7 +89,8 @@ const App = () => {
     place: "",
     state: "",
     rating: 0,
-    description: ""
+    description: "",
+    status: "New"
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -105,10 +108,17 @@ const App = () => {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Handle form submission here
-    console.log(formData);
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+
+  try {
+    await addDoc(collection(db, "ratings"), {
+      ...formData,
+      createdAt: new Date()
+    });
+
+    console.log("Rating submitted:", formData);
+    
     setIsOpen(false);
     // Reset form
     setFormData({
@@ -116,9 +126,15 @@ const App = () => {
       place: "",
       state: "",
       rating: 0,
-      description: ""
+      description: "",
+      status: "New"
     });
-  };
+  } catch (error) {
+    console.error("Error saving rating:", error);
+    // Optionally show a toast or Sonner alert here
+  }
+};
+
 
   return (
     <QueryClientProvider client={queryClient}>
