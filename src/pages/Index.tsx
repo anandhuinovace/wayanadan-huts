@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Hero from "../components/Hero";
 import About from "../components/About";
 import Accommodations from "../components/Accommodations";
@@ -6,6 +6,19 @@ import Testimonials from "../components/Testimonials";
 import Contact from "../components/Contact";
 
 const Index = () => {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    accommodation: "",
+    checkIn: null as Date | null,
+    checkOut: null as Date | null,
+    adults: "1",
+    children: "0",
+    guests: "1",
+    message: "",
+    status: "New",
+  });
   useEffect(() => {
     const handleIntersection = (entries: IntersectionObserverEntry[]) => {
       entries.forEach((entry) => {
@@ -36,9 +49,9 @@ const Index = () => {
     <>
       <Hero />
       <About />
-      <Accommodations />
+      <Accommodations  setFormData={setFormData} />
       <Testimonials />
-      <Contact />
+      <Contact formData={formData} setFormData={setFormData} />
     </>
   );
 };

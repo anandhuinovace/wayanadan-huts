@@ -3,6 +3,7 @@ import { db } from "../firebase";
 import { collection, getDocs, updateDoc, doc } from "firebase/firestore";
 import { motion } from "framer-motion";
 import { FiChevronLeft, FiChevronRight, FiFilter, FiX } from "react-icons/fi";
+import { serverTimestamp } from "firebase/firestore";
 
 type Rating = {
   id: string;
@@ -67,11 +68,16 @@ const AdminRatings = () => {
     setCurrentPage(1);
   };
 
-  const handleStatusChange = async (id: string, newStatus: string) => {
-    const docRef = doc(db, "ratings", id);
-    await updateDoc(docRef, { status: newStatus });
-    await fetchRatings();
-  };
+const handleStatusChange = async (id: string, newStatus: string) => {
+  const docRef = doc(db, "ratings", id);
+
+  await updateDoc(docRef, {
+    status: newStatus,
+    verified_date: serverTimestamp()
+  });
+
+  await fetchRatings();
+};
 
   const formatDate = (date: Date | null): string => {
     if (!date) return "-";

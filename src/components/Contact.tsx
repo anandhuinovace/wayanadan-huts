@@ -8,24 +8,16 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import emailjs from "emailjs-com";
 
-const Contact = () => {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    accommodation: "",
-    checkIn: null as Date | null,
-    checkOut: null as Date | null,
-    adults: "1",
-    children: "0",
-    guests: "1",
-    message: "",
-    status: "New",
-  });
+interface ContactProps {
+  formData: any;
+  setFormData: any;
+}
 
+const Contact: React.FC<ContactProps> = ({ formData, setFormData }) => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [bookedDates, setBookedDates] = useState<Date[]>([]);
 
+  console.log(formData);
   useEffect(() => {
     const totalGuests = parseInt(formData.adults) + parseInt(formData.children);
     setFormData((prev) => ({ ...prev, guests: totalGuests.toString() }));
@@ -462,8 +454,8 @@ const Contact = () => {
                       className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent appearance-none bg-white"
                     >
                       <option value="">Select accommodation</option>
-                      <option value="1 bhk">1 BHK </option>
-                      <option value="2 bhk">2 BHK</option>
+                      <option value="1 BHK">1 BHK </option>
+                      <option value="2 BHK">2 BHK</option>
                     </select>
                     <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
                       <svg
