@@ -7,6 +7,8 @@ import { FiChevronLeft, FiChevronRight, FiFilter, FiX } from "react-icons/fi";
 type Rating = {
   id: string;
   name: string;
+  place: string;
+  state: string;
   rating: number;
   description: string;
   status: string;
@@ -20,6 +22,8 @@ const AdminRatings = () => {
   const [itemsPerPage] = useState(10);
   const [filters, setFilters] = useState({
     status: "",
+    place: "",
+    state: ""
   });
   const [showFilters, setShowFilters] = useState(false);
 
@@ -33,7 +37,7 @@ const AdminRatings = () => {
 
     data.sort((a, b) => b.createdAt?.getTime() - a.createdAt?.getTime());
     setRatings(data);
-    setFilteredRatings(data.filter((r) => r.status === ""));
+    setFilteredRatings(data);
   };
 
   useEffect(() => {
@@ -48,6 +52,16 @@ const AdminRatings = () => {
     let result = [...ratings];
     if (filters.status) {
       result = result.filter((r) => r.status === filters.status);
+    }
+    if (filters.place) {
+      result = result.filter((r) => 
+        r.place.toLowerCase().includes(filters.place.toLowerCase())
+      );
+    }
+    if (filters.state) {
+      result = result.filter((r) => 
+        r.state.toLowerCase().includes(filters.state.toLowerCase())
+      );
     }
     setFilteredRatings(result);
     setCurrentPage(1);
@@ -72,8 +86,8 @@ const AdminRatings = () => {
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
   const resetFilters = () => {
-    setFilters({ status: "" });
-    setFilteredRatings(ratings.filter((r) => r.status === ""));
+    setFilters({ status: "", place: "", state: "" });
+    setFilteredRatings(ratings);
   };
 
   return (
@@ -122,7 +136,7 @@ const AdminRatings = () => {
                 </label>
                 <select
                   value={filters.status}
-                  onChange={(e) => setFilters({ status: e.target.value })}
+                  onChange={(e) => setFilters({ ...filters, status: e.target.value })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500"
                 >
                   <option value="">All</option>
@@ -130,6 +144,30 @@ const AdminRatings = () => {
                   <option value="approved">Approved</option>
                   <option value="rejected">Rejected</option>
                 </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Place
+                </label>
+                <input
+                  type="text"
+                  value={filters.place}
+                  onChange={(e) => setFilters({ ...filters, place: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  placeholder="Filter by place"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  State
+                </label>
+                <input
+                  type="text"
+                  value={filters.state}
+                  onChange={(e) => setFilters({ ...filters, state: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  placeholder="Filter by state"
+                />
               </div>
             </div>
           )}
@@ -149,6 +187,12 @@ const AdminRatings = () => {
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                     Name
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                    Place
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                    State
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                     Rating
@@ -175,20 +219,40 @@ const AdminRatings = () => {
                         {r.name}
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-700">
-                        {r.rating}
+                        {r.place}
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-700">
+                        {r.state}
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-700">
+                        <div className="flex items-center">
+                          {Array.from({ length: 5 }).map((_, i) => (
+                            <svg
+                              key={i}
+                              className={`w-4 h-4 ${i < Math.floor(r.rating) 
+                                ? "text-yellow-400 fill-current" 
+                                : i < r.rating 
+                                  ? "text-yellow-400 fill-current opacity-50" 
+                                  : "text-gray-300 fill-current"}`}
+                              viewBox="0 0 20 20"
+                            >
+                              <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
+                            </svg>
+                          ))}
+                          <span className="ml-1">({r.rating.toFixed(1)})</span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-700 max-w-xs truncate">
                         {r.description}
                       </td>
                       <td className="px-6 py-4">
                         <span
-                          className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                            r.status === "approved"
+                          className={`px-2 py-1 rounded-full text-xs font-semibold ${r.status === "approved"
                               ? "bg-green-100 text-green-800"
                               : r.status === "rejected"
-                              ? "bg-red-100 text-red-800"
-                              : "bg-blue-100 text-blue-800"
-                          }`}
+                                ? "bg-red-100 text-red-800"
+                                : "bg-blue-100 text-blue-800"
+                            }`}
                         >
                           {r.status || "New"}
                         </span>
@@ -197,17 +261,13 @@ const AdminRatings = () => {
                         {r.status === "New" && (
                           <>
                             <button
-                              onClick={() =>
-                                handleStatusChange(r.id, "approved")
-                              }
+                              onClick={() => handleStatusChange(r.id, "approved")}
                               className="text-xs bg-green-200 hover:bg-green-300 text-green-800 px-2 py-1 rounded"
                             >
                               Approve
                             </button>
                             <button
-                              onClick={() =>
-                                handleStatusChange(r.id, "rejected")
-                              }
+                              onClick={() => handleStatusChange(r.id, "rejected")}
                               className="text-xs bg-red-200 hover:bg-red-300 text-red-800 px-2 py-1 rounded"
                             >
                               Reject
@@ -220,7 +280,7 @@ const AdminRatings = () => {
                 ) : (
                   <tr>
                     <td
-                      colSpan={6}
+                      colSpan={8}
                       className="px-6 py-4 text-center text-gray-500"
                     >
                       No ratings found for selected filter
@@ -236,11 +296,10 @@ const AdminRatings = () => {
               <button
                 onClick={() => paginate(currentPage - 1)}
                 disabled={currentPage === 1}
-                className={`px-4 py-2 border text-sm rounded-md ${
-                  currentPage === 1
-                    ? "bg-gray-100 text-gray-400"
-                    : "bg-white hover:bg-gray-50 text-gray-700"
-                }`}
+                className={`px-4 py-2 border text-sm rounded-md ${currentPage === 1
+                  ? "bg-gray-100 text-gray-400"
+                  : "bg-white hover:bg-gray-50 text-gray-700"
+                  }`}
               >
                 <FiChevronLeft className="inline mr-1" />
                 Previous
@@ -251,11 +310,10 @@ const AdminRatings = () => {
                     <button
                       key={n}
                       onClick={() => paginate(n)}
-                      className={`px-3 py-1 rounded-md ${
-                        currentPage === n
-                          ? "bg-emerald-500 text-white"
-                          : "bg-white hover:bg-gray-100 text-gray-700"
-                      }`}
+                      className={`px-3 py-1 rounded-md ${currentPage === n
+                        ? "bg-emerald-500 text-white"
+                        : "bg-white hover:bg-gray-100 text-gray-700"
+                        }`}
                     >
                       {n}
                     </button>
@@ -265,11 +323,10 @@ const AdminRatings = () => {
               <button
                 onClick={() => paginate(currentPage + 1)}
                 disabled={currentPage === totalPages}
-                className={`px-4 py-2 border text-sm rounded-md ${
-                  currentPage === totalPages
-                    ? "bg-gray-100 text-gray-400"
-                    : "bg-white hover:bg-gray-50 text-gray-700"
-                }`}
+                className={`px-4 py-2 border text-sm rounded-md ${currentPage === totalPages
+                  ? "bg-gray-100 text-gray-400"
+                  : "bg-white hover:bg-gray-50 text-gray-700"
+                  }`}
               >
                 Next
                 <FiChevronRight className="inline ml-1" />
