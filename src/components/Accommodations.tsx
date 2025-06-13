@@ -1,7 +1,13 @@
 import { useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
-import { Bed, MapPin, Star, Trees } from "lucide-react";
+import { Bed, MapPin, Star, Trees, Wifi, ParkingSquare, Utensils, Tv } from "lucide-react";
 import { Link } from "react-router-dom";
+
+// Import images for 1 BHK
+import oneBhkLiving from "./../assets/living-room.jpeg";
+import oneBhkBedroom from "./../assets/guest.jpg";
+import oneBhkKitchen from "./../assets/stay/stay1.jpg";
+import oneBhkBathroom from "./../assets/stay/stay2.jpg";
 
 interface HutProps {
   title: string;
@@ -12,6 +18,7 @@ interface HutProps {
   location: string;
   delay?: string;
   handleBookNow: () => void;
+  features: string[];
 }
 
 interface ContactProps {
@@ -29,6 +36,7 @@ const HutCard = ({
   location,
   delay = "0s",
   handleBookNow,
+  features
 }: HutProps) => (
   <div
     className="bg-white rounded-2xl shadow-xl overflow-hidden transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 scroll-animate"
@@ -48,14 +56,14 @@ const HutCard = ({
         {/* Smaller images */}
         <div className="relative">
           <img
-            src={images[1] || images[0]} // Fallback to first image if not available
+            src={images[1]}
             alt={title}
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
         </div>
         <div className="relative">
           <img
-            src={images[2] || images[0]} // Fallback to first image if not available
+            src={images[2]}
             alt={title}
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
@@ -77,7 +85,7 @@ const HutCard = ({
         <h3 className="text-2xl font-bold text-gray-900">{title}</h3>
         <div className="flex items-center bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full text-sm">
           <Trees className="w-4 h-4 mr-1" />
-          <span>Eco</span>
+          <span>Premium</span>
         </div>
       </div>
 
@@ -94,6 +102,22 @@ const HutCard = ({
         </div>
       </div>
 
+      {/* Features section */}
+      <div className="mb-6">
+        <h4 className="font-medium text-gray-900 mb-2">Features:</h4>
+        <div className="grid grid-cols-2 gap-2">
+          {features.map((feature, index) => (
+            <div key={index} className="flex items-center text-sm text-gray-600">
+              {feature.includes('Wifi') && <Wifi className="w-4 h-4 mr-1 text-emerald-600" />}
+              {feature.includes('Parking') && <ParkingSquare className="w-4 h-4 mr-1 text-emerald-600" />}
+              {feature.includes('Kitchen') && <Utensils className="w-4 h-4 mr-1 text-emerald-600" />}
+              {feature.includes('TV') && <Tv className="w-4 h-4 mr-1 text-emerald-600" />}
+              {feature}
+            </div>
+          ))}
+        </div>
+      </div>
+
       <Button
         onClick={handleBookNow}
         className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white py-6 text-lg rounded-xl shadow-md transition-all duration-300 hover:shadow-lg"
@@ -106,7 +130,6 @@ const HutCard = ({
 
 const Accommodations: React.FC<ContactProps> = ({ setFormData }) => {
   const sectionRef = useRef<HTMLDivElement>(null);
-
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -136,36 +159,48 @@ const Accommodations: React.FC<ContactProps> = ({ setFormData }) => {
 
   const huts = [
     {
-      title: "1 BHK",
+      title: "1 BHK Apartment",
       description:
-        "Elevated bamboo treehouse offering panoramic views of the forest canopy. Perfect for couples seeking a romantic nature retreat.",
-      images: [
-        "https://images.unsplash.com/photo-1472396961693-142e6e269027?auto=format&fit=crop&w=800&q=80",
-        "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=500&q=80",
-        "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=500&q=80",
-      ],
+        "Cozy 1 bedroom apartment with attached bathroom, balcony, and all modern amenities. Perfect for couples or small families.",
+      images: [oneBhkLiving, oneBhkBedroom, oneBhkKitchen, oneBhkBathroom],
       price: "1800",
-      capacity: "2 Guests",
-      location: "Forest Edge",
+      capacity: "3 Adults or 2 Adults + 2 Children",
+      location: "Prime Location",
       delay: "0s",
+      features: [
+        "Attached Bathroom",
+        "Balcony in Bedroom",
+        "Free Wifi",
+        "Free Car Parking",
+        "Fully Equipped Kitchen",
+        "Dining Hall with Table",
+        "Living Room with TV",
+        "Sofa Set in Living Room"
+      ]
     },
     {
-      title: "2 BHK",
+      title: "2 BHK Apartment",
       description:
-        "Traditional mud and bamboo cottage with modern amenities and private garden. Ideal for families wanting an authentic experience.",
-      images: [
-        "https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=800&q=80",
-        "https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&w=500&q=80",
-        "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=500&q=80",
-      ],
+        "Spacious 2 bedroom apartment with one attached bathroom, balcony in master bedroom, and premium amenities for larger groups.",
+      images: [oneBhkLiving, oneBhkBedroom, oneBhkKitchen, oneBhkBathroom],
       price: "3600",
-      capacity: "4 Guests",
-      location: "Valley View",
+      capacity: "6 Adults or 3 Adults + 4 Children",
+      location: "Prime Location",
       delay: "0.2s",
+      features: [
+        "Attached Bathroom",
+        "Balcony in Master Bedroom",
+        "Free Wifi",
+        "Free Car Parking",
+        "Fully Equipped Kitchen",
+        "Dining Hall with Table",
+        "Living Room with TV",
+        "Sofa Set in Living Room"
+      ]
     },
   ];
 
-    const scrollToSection = (id: string) => {
+  const scrollToSection = (id: string) => {
     const section = document.getElementById(id);
     if (section) {
       section.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -194,12 +229,10 @@ const Accommodations: React.FC<ContactProps> = ({ setFormData }) => {
             LUXURY STAYS
           </span>
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-            Experience <span className="text-emerald-600">Authentic</span>{" "}
-            Wayanad
+            Comfortable <span className="text-emerald-600">Accommodations</span>
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Experience peaceful living in the heart of Wayanad's natural beauty
-            at our cozy homestay.
+            Experience comfortable living with all modern amenities in our well-appointed apartments.
           </p>
         </div>
 
