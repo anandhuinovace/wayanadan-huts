@@ -1,6 +1,15 @@
 import { useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
-import { Bed, MapPin, Star, Trees, Wifi, ParkingSquare, Utensils, Tv } from "lucide-react";
+import {
+  Bed,
+  MapPin,
+  Star,
+  Trees,
+  Wifi,
+  ParkingSquare,
+  Utensils,
+  Tv,
+} from "lucide-react";
 import { Link } from "react-router-dom";
 
 // Import images for 1 BHK
@@ -36,7 +45,7 @@ const HutCard = ({
   location,
   delay = "0s",
   handleBookNow,
-  features
+  features,
 }: HutProps) => (
   <div
     className="bg-white rounded-2xl shadow-xl overflow-hidden transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 scroll-animate"
@@ -107,11 +116,22 @@ const HutCard = ({
         <h4 className="font-medium text-gray-900 mb-2">Features:</h4>
         <div className="grid grid-cols-2 gap-2">
           {features.map((feature, index) => (
-            <div key={index} className="flex items-center text-sm text-gray-600">
-              {feature.includes('Wifi') && <Wifi className="w-4 h-4 mr-1 text-emerald-600" />}
-              {feature.includes('Parking') && <ParkingSquare className="w-4 h-4 mr-1 text-emerald-600" />}
-              {feature.includes('Kitchen') && <Utensils className="w-4 h-4 mr-1 text-emerald-600" />}
-              {feature.includes('TV') && <Tv className="w-4 h-4 mr-1 text-emerald-600" />}
+            <div
+              key={index}
+              className="flex items-center text-sm text-gray-600"
+            >
+              {feature.includes("Wifi") && (
+                <Wifi className="w-4 h-4 mr-1 text-emerald-600" />
+              )}
+              {feature.includes("Parking") && (
+                <ParkingSquare className="w-4 h-4 mr-1 text-emerald-600" />
+              )}
+              {feature.includes("Kitchen") && (
+                <Utensils className="w-4 h-4 mr-1 text-emerald-600" />
+              )}
+              {feature.includes("TV") && (
+                <Tv className="w-4 h-4 mr-1 text-emerald-600" />
+              )}
               {feature}
             </div>
           ))}
@@ -160,6 +180,7 @@ const Accommodations: React.FC<ContactProps> = ({ setFormData }) => {
   const huts = [
     {
       title: "1 BHK Apartment",
+      name: "1 BHK",
       description:
         "Cozy 1 bedroom apartment with attached bathroom, balcony, and all modern amenities. Perfect for couples or small families.",
       images: [oneBhkLiving, oneBhkBedroom, oneBhkKitchen, oneBhkBathroom],
@@ -175,11 +196,12 @@ const Accommodations: React.FC<ContactProps> = ({ setFormData }) => {
         "Fully Equipped Kitchen",
         "Dining Hall with Table",
         "Living Room with TV",
-        "Sofa Set in Living Room"
-      ]
+        "Sofa Set in Living Room",
+      ],
     },
     {
       title: "2 BHK Apartment",
+      name: "2 BHK",
       description:
         "Spacious 2 bedroom apartment with one attached bathroom, balcony in master bedroom, and premium amenities for larger groups.",
       images: [oneBhkLiving, oneBhkBedroom, oneBhkKitchen, oneBhkBathroom],
@@ -195,8 +217,8 @@ const Accommodations: React.FC<ContactProps> = ({ setFormData }) => {
         "Fully Equipped Kitchen",
         "Dining Hall with Table",
         "Living Room with TV",
-        "Sofa Set in Living Room"
-      ]
+        "Sofa Set in Living Room",
+      ],
     },
   ];
 
@@ -207,10 +229,10 @@ const Accommodations: React.FC<ContactProps> = ({ setFormData }) => {
     }
   };
 
-  const handleBookNow = (title: string, capacity: string) => {
+  const handleBookNow = (name: string, capacity: string) => {
     setFormData((prev: any) => ({
       ...prev,
-      accommodation: title,
+      accommodation: name,
       adults: capacity.split(" ")[0] || "1",
     }));
 
@@ -232,7 +254,8 @@ const Accommodations: React.FC<ContactProps> = ({ setFormData }) => {
             Comfortable <span className="text-emerald-600">Accommodations</span>
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Experience comfortable living with all modern amenities in our well-appointed apartments.
+            Experience comfortable living with all modern amenities in our
+            well-appointed apartments.
           </p>
         </div>
 
@@ -242,7 +265,7 @@ const Accommodations: React.FC<ContactProps> = ({ setFormData }) => {
               key={index}
               {...hut}
               delay={`${index * 0.1}s`}
-              handleBookNow={() => handleBookNow(hut.title, hut.capacity)}
+              handleBookNow={() => handleBookNow(hut.name, hut.capacity)}
             />
           ))}
         </div>
