@@ -11,6 +11,8 @@ import Layout from "@/components/UserLayout";
 import AdminLayout from "./components/AdminLayout";
 import AdminEnquirires from "./pages/AdminEnquiries";
 import AdminRatings from "./pages/AdminRatings";
+import AboutWyanad from "./pages/AboutWyanad";
+import ReachWayanad from "./pages/HowtoReach";
 
 export const AppRouter = () => {
   return (
@@ -20,6 +22,8 @@ export const AppRouter = () => {
         <Route path="/" element={<Index />} />
         <Route path="/menu" element={<FoodMenu />} />
         <Route path="/media" element={<Gallery />} />
+          <Route path="/about_wayanad" element={<AboutWyanad />} />
+            <Route path="/reach" element={<ReachWayanad />} />
       </Route>
 
       {/* Admin login - standalone, no layout */}

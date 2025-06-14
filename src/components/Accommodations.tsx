@@ -13,10 +13,14 @@ import {
 import { Link } from "react-router-dom";
 
 // Import images for 1 BHK
-import oneBhkLiving from "./../assets/living-room.jpeg";
+import oneBhkLiving from "./../assets/stay/stay6.jpg";
 import oneBhkBedroom from "./../assets/guest.jpg";
 import oneBhkKitchen from "./../assets/stay/stay1.jpg";
 import oneBhkBathroom from "./../assets/stay/stay2.jpg";
+
+import twoBhkLiving from "./../assets/twobhk-living.jpg"
+import twoBhkDining from "./../assets/twobhk-dining.jpg"
+import twoBhkKitchen from "./../assets/twoBhk-kitchen.jpg"
 
 interface HutProps {
   title: string;
@@ -94,7 +98,7 @@ const HutCard = ({
         <h3 className="text-2xl font-bold text-gray-900">{title}</h3>
         <div className="flex items-center bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full text-sm">
           <Trees className="w-4 h-4 mr-1" />
-          <span>Premium</span>
+          <span>Offer</span>
         </div>
       </div>
 
@@ -179,7 +183,7 @@ const Accommodations: React.FC<ContactProps> = ({ setFormData }) => {
 
   const huts = [
     {
-      title: "1 BHK Apartment",
+      title: "1 BHK Apartment AC",
       name: "1 BHK",
       description:
         "Cozy 1 bedroom apartment with attached bathroom, balcony, and all modern amenities. Perfect for couples or small families.",
@@ -200,11 +204,11 @@ const Accommodations: React.FC<ContactProps> = ({ setFormData }) => {
       ],
     },
     {
-      title: "2 BHK Apartment",
+      title: "2 BHK Apartment AC",
       name: "2 BHK",
       description:
         "Spacious 2 bedroom apartment with one attached bathroom, balcony in master bedroom, and premium amenities for larger groups.",
-      images: [oneBhkLiving, oneBhkBedroom, oneBhkKitchen, oneBhkBathroom],
+      images: [ twoBhkKitchen, twoBhkDining,twoBhkLiving],
       price: "3600",
       capacity: "6 Adults or 3 Adults + 4 Children",
       location: "Prime Location",

@@ -2,28 +2,39 @@ import { useState, useEffect } from 'react';
 import { Button } from '../components/ui/button';
 import { X, ChevronLeft, ChevronRight, ImageIcon, VideoIcon } from 'lucide-react';
 import "../components/index.css";
+import WayanadanReel from "../assets/videos/wayanadan-reel.mp4";
+import WayanadanView from "../assets/videos/video-full.mp4";
 
 // Dynamically import all images from the folder
 const imageModules = import.meta.glob('@/assets/stay/*.jpg', { eager: true, import: 'default' });
 
-// Sample video data - replace with your actual video sources
+// Video data with fallback thumbnails
 const galleryVideos = [
   {
     id: 1,
-    src: 'https://example.com/video1.mp4',
-    
+    src: WayanadanReel,
     title: 'Wayanad Retreat Tour',
     description: 'A complete tour of our beautiful eco retreat in Wayanad'
   },
   {
     id: 2,
-    src: 'https://example.com/video2.mp4',
-   
+    src: WayanadanView,
     title: 'Nature Walk',
     description: 'Experience the beautiful nature trails around our property'
   },
-  // Add more videos as needed
 ];
+
+// Fallback thumbnail component
+const VideoThumbnail = ({ title }: { title: string }) => {
+  return (
+    <div className="w-full h-full bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center">
+      <div className="text-white text-center p-4">
+        <VideoIcon className="w-12 h-12 mx-auto mb-2" />
+        <h3 className="font-bold text-lg">{title}</h3>
+      </div>
+    </div>
+  );
+};
 
 const Gallery = () => {
   const [activeTab, setActiveTab] = useState<'photos' | 'videos'>('photos');
@@ -158,14 +169,11 @@ const Gallery = () => {
                     src={item.src}
                     alt={`Gallery Image ${idx}`}
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    loading="lazy"
                   />
                 ) : (
                   <>
-                    <img
-                      src={``}
-                      alt={`Video Thumbnail ${idx}`}
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    />
+                    <VideoThumbnail title={item.title} />
                     <div className="absolute inset-0 flex items-center justify-center">
                       <div className="w-16 h-16 bg-white/80 rounded-full flex items-center justify-center">
                         <VideoIcon className="w-8 h-8 text-emerald-600" />
@@ -255,6 +263,7 @@ const Gallery = () => {
                   controls 
                   autoPlay
                   className="w-full h-full object-contain"
+                  key={currentItems[expandedItem].src}
                 >
                   <source src={currentItems[expandedItem].src} type="video/mp4" />
                   Your browser does not support the video tag.

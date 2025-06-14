@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight, ChevronDown } from 'lucide-react';
-// import Image1 from '@/assets/wayanad-huts.jpg';
 import Image1 from '@/assets/living-room.jpeg'
 import Image2 from '@/assets/wayanadan-sky-view.jpeg';
 import Image3 from '@/assets/guest.jpg';
+import { Link } from 'react-router-dom';
 
 const slides = [
   {
@@ -12,24 +12,30 @@ const slides = [
     title: 'Discover Wayanad’s Natural Wonders',
     subtitle: 'From the Heart of Heritage',
     description: 'Stay in our cozy, eco-friendly homestay nestled amidst the cultural and scenic landmarks of Wayanad—just minutes from Edakkal Caves, Karapuzha Dam, Phantom Rock, and more.',
-    ctaPrimary: 'Book Your Stay',
-    ctaSecondary: 'Explore Huts'
+    ctaPrimary: 'About Wayanad',
+    ctaPrimaryLink: '/about_wayanad',
+    ctaSecondary: 'How to Reach',
+    ctaSecondaryLink: '/reach'
   },
   {
     image: Image2,
     title: 'Wake Up to Majestic Hills',
     subtitle: 'Misty Mornings in Nature',
     description: 'Experience tranquility and breathtaking views from your private balcony in the hills of Wayanad.',
-    ctaPrimary: 'View Gallery',
-    ctaSecondary: 'Special Offers'
+    ctaPrimary: 'About Wayanad',
+    ctaPrimaryLink: '/about_wayanad',
+    ctaSecondary: 'How to Reach',
+    ctaSecondaryLink: '/reach'
   },
   {
     image: Image3,
     title: 'Adventure Meets Comfort',
     subtitle: 'Explore the Unexplored',
     description: 'Discover waterfalls, wildlife, and winding trails while relaxing in our nature-inspired homestay.',
-    ctaPrimary: 'Plan Your Trip',
-    ctaSecondary: 'Local Experiences'
+    ctaPrimary: 'About Wayanad',
+    ctaPrimaryLink: '/about_wayanad',
+    ctaSecondary: 'How to Reach',
+    ctaSecondaryLink: '/reach'
   },
 ];
 
@@ -107,15 +113,19 @@ const CarouselHero = () => {
               </h1>
               <p className="text-xl text-white/90 max-w-lg">{slide.description}</p>
               <div className="flex flex-col sm:flex-row gap-4 pt-4">
-                <Button className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white px-8 py-6 text-lg shadow-lg hover:shadow-xl transition-all">
-                  {slide.ctaPrimary}
-                </Button>
-                <Button
-                  variant="outline"
-                  className="bg-transparent border-white text-white hover:bg-white/10 hover:border-emerald-300 px-8 py-6 text-lg hover:text-emerald-300 transition-all"
-                >
-                  {slide.ctaSecondary}
-                </Button>
+                <Link to={slide.ctaPrimaryLink} >
+                  <Button className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white px-8 py-6 text-lg shadow-lg hover:shadow-xl transition-all">
+                    {slide.ctaPrimary}
+                  </Button>
+                </Link>
+                <Link to={slide.ctaSecondaryLink} >
+                  <Button
+                    variant="outline"
+                    className="bg-transparent border-white text-white hover:bg-white/10 hover:border-emerald-300 px-8 py-6 text-lg hover:text-emerald-300 transition-all"
+                  >
+                    {slide.ctaSecondary}
+                  </Button>
+                </Link>
               </div>
             </div>
           </div>
