@@ -4,7 +4,6 @@ import {
   Bed,
   MapPin,
   Star,
-  Trees,
   Wifi,
   ParkingSquare,
   Utensils,
@@ -30,6 +29,8 @@ interface HutProps {
   capacity: string;
   location: string;
   delay?: string;
+  offer?: string;
+   discount?: string;
   handleBookNow: () => void;
   features: string[];
 }
@@ -47,6 +48,8 @@ const HutCard = ({
   price,
   capacity,
   location,
+  offer,
+  discount,
   delay = "0s",
   handleBookNow,
   features,
@@ -97,8 +100,18 @@ const HutCard = ({
       <div className="flex justify-between items-start mb-3">
         <h3 className="text-2xl font-bold text-gray-900">{title}</h3>
         <div className="flex items-center bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full text-sm">
-          <Trees className="w-4 h-4 mr-1" />
-          <span>Offer</span>
+           {offer && (
+            <>
+              <span className="line-through text-gray-500 mr-1">₹{offer}</span>
+              <span className="font-bold">₹{price}</span>
+              {/* {discount && (
+                <span className="ml-1 bg-red-500 text-white px-2 py-0.5 rounded-full text-xs">
+                  {discount} OFF
+                </span>
+              )} */}
+            </>
+          )}
+          {!offer && <span>₹{price}</span>}
         </div>
       </div>
 
@@ -188,9 +201,11 @@ const Accommodations: React.FC<ContactProps> = ({ setFormData }) => {
       description:
         "Cozy 1 bedroom apartment with attached bathroom, balcony, and all modern amenities. Perfect for couples or small families.",
       images: [oneBhkLiving, oneBhkBedroom, oneBhkKitchen, oneBhkBathroom],
-      price: "1800",
+      price: "2000",
       capacity: "3 Adults or 2 Adults + 2 Children",
       location: "Prime Location",
+      offer: "2800",
+      discount: "2000",
       delay: "0s",
       features: [
         "Attached Bathroom",
@@ -212,6 +227,8 @@ const Accommodations: React.FC<ContactProps> = ({ setFormData }) => {
       price: "3600",
       capacity: "6 Adults or 3 Adults + 4 Children",
       location: "Prime Location",
+      offer: "4200",
+      discount: "3600",
       delay: "0.2s",
       features: [
         "Attached Bathroom",
