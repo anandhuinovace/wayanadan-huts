@@ -6,6 +6,9 @@ import {
   updateDoc,
   doc,
   writeBatch,
+  getDoc,
+  query,
+  where,
 } from "firebase/firestore";
 import { motion } from "framer-motion";
 import { FiChevronLeft, FiChevronRight, FiFilter, FiX } from "react-icons/fi";
@@ -32,18 +35,17 @@ const AdminEnquirires = () => {
         ...d,
         checkIn: d.checkIn?.toDate?.() || null,
         checkOut: d.checkOut?.toDate?.() || null,
-        createdAt: d.createdAt?.toDate?.() || null,
+        timestamp: d.timestamp?.toDate?.() || null,
       };
     });
-    
+
     // Sort by createdAt if available, otherwise by document ID (which is time-ordered)
     data.sort((a, b) => {
-      if (a.createdAt && b.createdAt) {
-        return b.createdAt.getTime() - a.createdAt.getTime();
-      }
-      return b.id.localeCompare(a.id); // Document IDs are time-ordered
+      const timeA = a.timestamp?.getTime?.() || 0;
+      const timeB = b.timestamp?.getTime?.() || 0;
+      return timeB - timeA; // Newest first
     });
-    
+
     setEnquiries(data);
     setFilteredEnquiries(data);
   };
@@ -60,18 +62,18 @@ const AdminEnquirires = () => {
     let result = [...enquiries];
 
     if (filters.phone) {
-      result = result.filter(e => 
+      result = result.filter((e) =>
         e.phone?.toLowerCase().includes(filters.phone.toLowerCase())
       );
     }
 
     if (filters.status) {
-      result = result.filter(e => e.status === filters.status);
+      result = result.filter((e) => e.status === filters.status);
     }
 
     if (filters.fromDate) {
       const fromDate = new Date(filters.fromDate);
-      result = result.filter(e => {
+      result = result.filter((e) => {
         if (!e.checkIn) return false;
         return new Date(e.checkIn) >= fromDate;
       });
@@ -79,7 +81,7 @@ const AdminEnquirires = () => {
 
     if (filters.toDate) {
       const toDate = new Date(filters.toDate);
-      result = result.filter(e => {
+      result = result.filter((e) => {
         if (!e.checkIn) return false;
         return new Date(e.checkIn) <= toDate;
       });
@@ -107,6 +109,41 @@ const AdminEnquirires = () => {
       await batch.commit();
     }
 
+    if (newStatus === "cancelled") {
+      // First, fetch the enquiry to get its date range and accommodation
+      const snapshot = await getDoc(docRef);
+      const data = snapshot.data();
+
+      if (data?.checkIn && data?.checkOut && data?.accommodation) {
+        const checkIn = data.checkIn.toDate();
+        const checkOut = data.checkOut.toDate();
+        const cottage = data.accommodation;
+
+        // Generate all date strings between checkIn and checkOut
+        const dateStrings = [];
+        const current = new Date(checkIn);
+        while (current <= checkOut) {
+          const dateStr = current.toISOString().split("T")[0];
+          dateStrings.push(dateStr);
+          current.setDate(current.getDate() + 1);
+        }
+
+        // Find and delete matching documents in booked_dates
+        const q = query(
+          collection(db, "booked_dates"),
+          where("cottage", "==", cottage),
+          where("date", "in", dateStrings.slice(0, 10)) // Firestore allows max 10 in "in" queries
+        );
+
+        const snapshot = await getDocs(q);
+        const batch = writeBatch(db);
+        snapshot.forEach((doc) => {
+          batch.delete(doc.ref);
+        });
+        await batch.commit();
+      }
+    }
+
     await fetchEnquiries();
   };
 
@@ -125,8 +162,8 @@ const AdminEnquirires = () => {
 
   const formatDate = (date: Date | null): string => {
     if (!date) return "-";
-    const day = date.getDate().toString().padStart(2, '0');
-    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, "0");
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
     const year = date.getFullYear();
     return `${day}/${month}/${year}`;
   };
@@ -134,7 +171,10 @@ const AdminEnquirires = () => {
   // Pagination logic
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = filteredEnquiries.slice(indexOfFirstItem, indexOfLastItem);
+  const currentItems = filteredEnquiries.slice(
+    indexOfFirstItem,
+    indexOfLastItem
+  );
   const totalPages = Math.ceil(filteredEnquiries.length / itemsPerPage);
 
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
@@ -176,7 +216,7 @@ const AdminEnquirires = () => {
                 className="flex items-center px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded-md text-sm"
               >
                 <FiFilter className="mr-1" />
-                {showFilters ? 'Hide Filters' : 'Show Filters'}
+                {showFilters ? "Hide Filters" : "Show Filters"}
               </button>
               <button
                 onClick={resetFilters}
@@ -197,7 +237,9 @@ const AdminEnquirires = () => {
                 <input
                   type="text"
                   value={filters.phone}
-                  onChange={(e) => setFilters({...filters, phone: e.target.value})}
+                  onChange={(e) =>
+                    setFilters({ ...filters, phone: e.target.value })
+                  }
                   placeholder="Search by phone"
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500"
                 />
@@ -208,7 +250,9 @@ const AdminEnquirires = () => {
                 </label>
                 <select
                   value={filters.status}
-                  onChange={(e) => setFilters({...filters, status: e.target.value})}
+                  onChange={(e) =>
+                    setFilters({ ...filters, status: e.target.value })
+                  }
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500"
                 >
                   <option value="">All Statuses</option>
@@ -225,7 +269,9 @@ const AdminEnquirires = () => {
                 <input
                   type="date"
                   value={filters.fromDate}
-                  onChange={(e) => setFilters({...filters, fromDate: e.target.value})}
+                  onChange={(e) =>
+                    setFilters({ ...filters, fromDate: e.target.value })
+                  }
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500"
                 />
               </div>
@@ -236,7 +282,9 @@ const AdminEnquirires = () => {
                 <input
                   type="date"
                   value={filters.toDate}
-                  onChange={(e) => setFilters({...filters, toDate: e.target.value})}
+                  onChange={(e) =>
+                    setFilters({ ...filters, toDate: e.target.value })
+                  }
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500"
                 />
               </div>
@@ -274,13 +322,13 @@ const AdminEnquirires = () => {
                     Check-Out
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                   Adults
+                    Adults
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Child
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Guests
+                    Guests
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Accommodation
@@ -298,10 +346,12 @@ const AdminEnquirires = () => {
                   currentItems.map((e) => (
                     <tr key={e.id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 whitespace-nowrap text-gray-500">
-                        {formatDate(e.createdAt)}
+                        {formatDate(e.timestamp)}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="font-medium text-gray-900">{e.name}</div>
+                        <div className="font-medium text-gray-900">
+                          {e.name}
+                        </div>
                         <div className="text-xs text-gray-500 mt-1 line-clamp-2">
                           {e.message}
                         </div>
@@ -360,12 +410,14 @@ const AdminEnquirires = () => {
                       <td className="px-6 py-4 whitespace-nowrap">
                         {e.status === "New" || !e.status ? (
                           <button
-                            onClick={() => handleStatusChange(e.id, "contacted")}
+                            onClick={() =>
+                              handleStatusChange(e.id, "contacted")
+                            }
                             className="text-xs bg-yellow-200 hover:bg-yellow-300 text-yellow-800 px-2 py-1 rounded mr-2"
                           >
                             Contacted
                           </button>
-                        ) : (
+                        ) : e.status === "contacted" ? (
                           <div className="flex space-x-2">
                             <button
                               onClick={() =>
@@ -381,19 +433,33 @@ const AdminEnquirires = () => {
                               Book
                             </button>
                             <button
-                              onClick={() => handleStatusChange(e.id, "cancelled")}
+                              onClick={() =>
+                                handleStatusChange(e.id, "cancelled")
+                              }
                               className="text-xs bg-red-200 hover:bg-red-300 text-red-800 px-2 py-1 rounded"
                             >
                               Cancel
                             </button>
                           </div>
+                        ) : (
+                          <button
+                            onClick={() =>
+                              handleStatusChange(e.id, "cancelled")
+                            }
+                            className="text-xs bg-red-200 hover:bg-red-300 text-red-800 px-2 py-1 rounded"
+                          >
+                            Cancel
+                          </button>
                         )}
                       </td>
                     </tr>
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={12} className="px-6 py-4 text-center text-gray-500">
+                    <td
+                      colSpan={12}
+                      className="px-6 py-4 text-center text-gray-500"
+                    >
                       No enquiries found matching your filters
                     </td>
                   </tr>

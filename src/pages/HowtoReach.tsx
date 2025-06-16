@@ -162,9 +162,9 @@ const ReachWayanad = () => {
                       </li>
                     ))}
                   </ul>
-                  <p className="mt-4 text-gray-700">
+                  {/* <p className="mt-4 text-gray-700">
                     For customized packages, email us at <a href="mailto:info@groowynd.com" className="text-blue-600 hover:underline">info@groowynd.com</a> or visit <a href="https://groowynd.com" className="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">groowynd.com</a>
-                  </p>
+                  </p> */}
                 </div>
               </div>
             </div>

@@ -1,5 +1,7 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { getDocs, collection, addDoc } from "firebase/firestore";
+import { db } from "@/firebase";
 import {
   Bed,
   MapPin,
@@ -17,9 +19,9 @@ import oneBhkBedroom from "./../assets/guest.jpg";
 import oneBhkKitchen from "./../assets/stay/stay1.jpg";
 import oneBhkBathroom from "./../assets/stay/stay2.jpg";
 
-import twoBhkLiving from "./../assets/twobhk-living.jpg"
-import twoBhkDining from "./../assets/twobhk-dining.jpg"
-import twoBhkKitchen from "./../assets/twoBhk-kitchen.jpg"
+import twoBhkLiving from "./../assets/twobhk-living.jpg";
+import twoBhkDining from "./../assets/twobhk-dining.jpg";
+import twoBhkKitchen from "./../assets/twoBhk-kitchen.jpg";
 
 interface HutProps {
   title: string;
@@ -30,7 +32,7 @@ interface HutProps {
   location: string;
   delay?: string;
   offer?: string;
-   discount?: string;
+  discount?: string;
   handleBookNow: () => void;
   features: string[];
 }
@@ -100,7 +102,7 @@ const HutCard = ({
       <div className="flex justify-between items-start mb-3">
         <h3 className="text-2xl font-bold text-gray-900">{title}</h3>
         <div className="flex items-center bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full text-sm">
-           {offer && (
+          {offer && (
             <>
               <span className="line-through text-gray-500 mr-1">₹{offer}</span>
               <span className="font-bold">₹{price}</span>
@@ -168,6 +170,33 @@ const HutCard = ({
 const Accommodations: React.FC<ContactProps> = ({ setFormData }) => {
   const sectionRef = useRef<HTMLDivElement>(null);
 
+  type RateType = {
+    price: string;
+    offer: string;
+    discount: string;
+  };
+
+  const [rates, setRates] = useState<Record<string, RateType>>({});
+  useEffect(() => {
+    const fetchRates = async () => {
+      const snapshot = await getDocs(collection(db, "rates"));
+      const rateMap = {};
+
+      snapshot.docs.forEach((doc) => {
+        const data = doc.data();
+        rateMap[data.name] = {
+          price: data.price,
+          offer: data.offer,
+          discount: data.discount,
+        };
+      });
+
+      setRates(rateMap);
+    };
+
+    fetchRates();
+  }, []);
+
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -201,11 +230,11 @@ const Accommodations: React.FC<ContactProps> = ({ setFormData }) => {
       description:
         "Cozy 1 bedroom apartment with attached bathroom, balcony, and all modern amenities. Perfect for couples or small families.",
       images: [oneBhkLiving, oneBhkBedroom, oneBhkKitchen, oneBhkBathroom],
-      price: "2000",
+      price: rates?.["1 BHK"]?.price ?? "Loading...",
+      offer: rates?.["1 BHK"]?.offer ?? "",
+      discount: rates?.["1 BHK"]?.discount ?? "",
       capacity: "3 Adults or 2 Adults + 2 Children",
       location: "Prime Location",
-      offer: "2800",
-      discount: "2000",
       delay: "0s",
       features: [
         "Attached Bathroom",
@@ -223,12 +252,12 @@ const Accommodations: React.FC<ContactProps> = ({ setFormData }) => {
       name: "2 BHK",
       description:
         "Spacious 2 bedroom apartment with one attached bathroom, balcony in master bedroom, and premium amenities for larger groups.",
-      images: [ twoBhkKitchen, twoBhkDining,twoBhkLiving],
-      price: "3600",
+      images: [twoBhkKitchen, twoBhkDining, twoBhkLiving],
+      price: rates?.["2 BHK"]?.price ?? "Loading...",
+      offer: rates?.["2 BHK"]?.offer ?? "",
+      discount: rates?.["2 BHK"]?.discount ?? "",
       capacity: "6 Adults or 3 Adults + 4 Children",
       location: "Prime Location",
-      offer: "4200",
-      discount: "3600",
       delay: "0.2s",
       features: [
         "Attached Bathroom",
@@ -257,7 +286,7 @@ const Accommodations: React.FC<ContactProps> = ({ setFormData }) => {
       adults: capacity.split(" ")[0] || "1",
     }));
 
-    setTimeout(() => scrollToSection("contact"), 100);
+    setTimeout(() => scrollToSection("contact-form"), 100);
   };
 
   return (

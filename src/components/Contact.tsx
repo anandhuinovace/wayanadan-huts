@@ -25,19 +25,16 @@ const Contact: React.FC<ContactProps> = ({ formData, setFormData }) => {
 
   useEffect(() => {
     const fetchBookedDates = async () => {
-      if (!formData.accommodation) return;
-
       const snapshot = await getDocs(collection(db, "booked_dates"));
-      const filtered = snapshot.docs
+      const allDates = snapshot.docs
         .map((doc) => doc.data())
-        .filter((entry) => entry.cottage === formData.accommodation)
         .map((entry) => new Date(entry.date));
 
-      setBookedDates(filtered);
+      setBookedDates(allDates);
     };
 
     fetchBookedDates();
-  }, [formData.accommodation]);
+  }, []);
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -329,6 +326,7 @@ const Contact: React.FC<ContactProps> = ({ formData, setFormData }) => {
             <form
               onSubmit={handleSubmit}
               className="bg-white p-8 rounded-2xl shadow-lg border border-emerald-100 relative overflow-hidden"
+              id="contact-form"
             >
               {isSubmitted && (
                 <motion.div
