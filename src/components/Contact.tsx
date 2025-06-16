@@ -646,6 +646,17 @@ const Contact: React.FC<ContactProps> = ({ formData, setFormData }) => {
                   placeholder="Tell us about your dream getaway..."
                 ></textarea>
               </motion.div>
+              <motion.div
+                className="mt-6 text-sm text-gray-600 text-center"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+              >
+                <p>
+                  <strong>Note:</strong> Check-in time is{" "}
+                  <strong>12:30 PM</strong>, and check-out time is{" "}
+                  <strong>11:00 AM</strong>.
+                </p>
+              </motion.div>
 
               <motion.div
                 whileHover={{ scale: 1.02 }}

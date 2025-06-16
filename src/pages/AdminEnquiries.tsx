@@ -122,7 +122,7 @@ const AdminEnquirires = () => {
         // Generate all date strings between checkIn and checkOut
         const dateStrings = [];
         const current = new Date(checkIn);
-        while (current <= checkOut) {
+        while (current < checkOut) {
           const dateStr = current.toISOString().split("T")[0];
           dateStrings.push(dateStr);
           current.setDate(current.getDate() + 1);
