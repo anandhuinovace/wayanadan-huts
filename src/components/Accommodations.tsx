@@ -23,6 +23,10 @@ import twoBhkLiving from "./../assets/twobhk-living.jpg";
 import twoBhkDining from "./../assets/twobhk-dining.jpg";
 import twoBhkKitchen from "./../assets/twoBhk-kitchen.jpg";
 
+import sprinFitMatress1 from "./../assets/mattress/spring-mattress-hotel-1000x1000.webp";
+import sprinFitMatress2 from "./../assets/mattress/mattresdetail.jpeg";
+import sprinFitMatress3 from "./../assets/mattress/actress.jpeg";
+
 interface HutProps {
   title: string;
   description: string;
@@ -318,6 +322,45 @@ const Accommodations: React.FC<ContactProps> = ({ setFormData }) => {
               handleBookNow={() => handleBookNow(hut.name, hut.capacity)}
             />
           ))}
+        </div>
+
+        {/* Premium Mattress Section */}
+        <div
+          className="mt-20 text-center scroll-animate px-4 md:px-0"
+          style={{ animationDelay: "0.3s" }}
+        >
+          <h3 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            Sleep on Luxury with{" "}
+            <span className="text-emerald-600">Springfit Mattress</span>
+          </h3>
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto mb-8">
+            All our accommodations are equipped with{" "}
+            <strong>Springfit premium mattresses</strong>, ensuring restful
+            sleep and superior comfort for all our guests.
+          </p>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-5xl mx-auto">
+            <div>
+              <img
+                src={sprinFitMatress3}
+                alt="Springfit Mattress 1"
+                className="rounded-xl shadow-lg w-full h-full object-cover"
+                style={{ maxHeight: "500px" }}
+              />
+            </div>
+            <div className="grid grid-cols-1 gap-4">
+              <img
+                src={sprinFitMatress1}
+                alt="Springfit Mattress 2"
+                className="rounded-xl shadow-lg w-full h-60 object-cover"
+              />
+              <img
+                src={sprinFitMatress2}
+                alt="Springfit Mattress 3"
+                className="rounded-xl shadow-lg w-full h-60 object-cover"
+              />
+            </div>
+          </div>
         </div>
 
         <div
