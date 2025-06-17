@@ -201,7 +201,7 @@ const Navbar = () => {
                     ? "bg-emerald-100 text-emerald-700"
                     : "text-gray-700 hover:bg-gray-100"
                 }`}
-                onClick={() => {
+                onClick={(e) => {
                   if (item.to.startsWith("#")) {
                     e.preventDefault(); // prevent anchor jump
                     setActiveLink(item.id);

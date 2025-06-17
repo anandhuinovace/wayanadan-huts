@@ -1,7 +1,11 @@
-import { motion } from 'framer-motion';
-import { Leaf, Coffee, Utensils, Drumstick } from 'lucide-react';
+import { motion } from "framer-motion";
+import { Leaf, Coffee, Utensils, Drumstick } from "lucide-react";
+import { useEffect } from "react";
 
 const FoodMenu = () => {
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
   const menuCategories = [
     {
       title: "Hot & Snacks",
@@ -17,8 +21,8 @@ const FoodMenu = () => {
         { id: 8, name: "Beef Cutlet", price: "₹32" },
         { id: 9, name: "Samosa Veg", price: "₹15" },
         { id: 10, name: "Samosa Chicken", price: "₹20" },
-        { id: 11, name: "Samosa Beef", price: "₹22" }
-      ]
+        { id: 11, name: "Samosa Beef", price: "₹22" },
+      ],
     },
     {
       title: "Breakfast",
@@ -35,14 +39,18 @@ const FoodMenu = () => {
         { id: 9, name: "Kadala Curry", price: "₹70" },
         { id: 10, name: "Green Peas Curry", price: "₹70" },
         { id: 11, name: "Egg Curry", price: "₹70" },
-        { id: 12, name: "Fish Curry", price: "Market Price" }
-      ]
+        { id: 12, name: "Fish Curry", price: "Market Price" },
+      ],
     },
     {
       title: "Lunch & Dinner",
       icon: <Drumstick className="w-5 h-5 text-emerald-600" />,
       items: [
-        { id: 1, name: "Kerala Meals (Rice, Veg Curry, Fish Curry, 2 Thoran, Papad, Pickle)", price: "₹100" },
+        {
+          id: 1,
+          name: "Kerala Meals (Rice, Veg Curry, Fish Curry, 2 Thoran, Papad, Pickle)",
+          price: "₹100",
+        },
         { id: 2, name: "Chicken Biriyani", price: "₹180" },
         { id: 3, name: "Beef Biriyani", price: "₹200" },
         { id: 4, name: "Egg Biriyani", price: "₹120" },
@@ -56,8 +64,8 @@ const FoodMenu = () => {
         { id: 12, name: "Egg Curry", price: "₹70" },
         { id: 13, name: "Fish Fry", price: "Market Price" },
         { id: 14, name: "Omelet (Single)", price: "₹25" },
-        { id: 15, name: "Omelet (Double)", price: "₹50" }
-      ]
+        { id: 15, name: "Omelet (Double)", price: "₹50" },
+      ],
     },
     {
       title: "Specialties",
@@ -67,15 +75,18 @@ const FoodMenu = () => {
         { id: 2, name: "Chicken Mandhi (Half)", price: "₹300" },
         { id: 3, name: "Chicken Mandhi (Full)", price: "₹600" },
         { id: 4, name: "Beef Mandhi (Half)", price: "₹350" },
-        { id: 5, name: "Beef Mandhi (Full)", price: "₹700" }
-      ]
-    }
+        { id: 5, name: "Beef Mandhi (Full)", price: "₹700" },
+      ],
+    },
   ];
 
   return (
-    <section id="food-menu" className="py-20 bg-gradient-to-b from-emerald-50 to-white">
+    <section
+      id="food-menu"
+      className="py-20 bg-gradient-to-b from-emerald-50 to-white"
+    >
       <div className="container mx-auto px-4 md:px-6">
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
@@ -88,7 +99,8 @@ const FoodMenu = () => {
             Taste of <span className="text-emerald-600">Kerala</span>
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Experience traditional Wayanad cuisine prepared with locally sourced ingredients
+            Experience traditional Wayanad cuisine prepared with locally sourced
+            ingredients
           </p>
         </motion.div>
 
@@ -106,18 +118,22 @@ const FoodMenu = () => {
                 <div className="bg-emerald-100 p-2 rounded-lg mr-3">
                   {category.icon}
                 </div>
-                <h3 className="text-xl font-bold text-gray-900">{category.title}</h3>
+                <h3 className="text-xl font-bold text-gray-900">
+                  {category.title}
+                </h3>
               </div>
               <div className="p-6">
                 <ul className="space-y-4">
                   {category.items.map((item) => (
-                    <motion.li 
+                    <motion.li
                       key={item.id}
                       whileHover={{ x: 5 }}
                       className="flex justify-between pb-2 border-b border-gray-100 last:border-0"
                     >
                       <span className="text-gray-700">{item.name}</span>
-                      <span className="font-medium text-emerald-600 whitespace-nowrap">{item.price}</span>
+                      <span className="font-medium text-emerald-600 whitespace-nowrap">
+                        {item.price}
+                      </span>
                     </motion.li>
                   ))}
                 </ul>
@@ -134,7 +150,8 @@ const FoodMenu = () => {
           className="mt-12 bg-emerald-50 rounded-2xl p-6 text-center border border-emerald-100"
         >
           <p className="text-gray-700">
-            <span className="font-bold text-emerald-600">Note:</span> We can prepare any dish upon special request using fresh local ingredients
+            <span className="font-bold text-emerald-600">Note:</span> We can
+            prepare any dish upon special request using fresh local ingredients
           </p>
         </motion.div>
       </div>
