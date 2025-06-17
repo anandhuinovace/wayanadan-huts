@@ -23,9 +23,10 @@ import twoBhkLiving from "./../assets/twobhk-living.jpg";
 import twoBhkDining from "./../assets/twobhk-dining.jpg";
 import twoBhkKitchen from "./../assets/twoBhk-kitchen.jpg";
 
-import sprinFitMatress1 from "./../assets/mattress/spring-mattress-hotel-1000x1000.webp";
+import sprinFitMatress1 from "./../assets/mattress/img1.jpeg";
 import sprinFitMatress2 from "./../assets/mattress/mattresdetail.jpeg";
-import sprinFitMatress3 from "./../assets/mattress/actress.jpeg";
+import sprinFitMatress3 from "./../assets/mattress/actress.jpg";
+import sprinFitMatress4 from "./../assets/mattress/zoomed (1).jpeg";
 
 interface HutProps {
   title: string;
@@ -345,7 +346,7 @@ const Accommodations: React.FC<ContactProps> = ({ setFormData }) => {
                 src={sprinFitMatress3}
                 alt="Springfit Mattress 1"
                 className="rounded-xl shadow-lg w-full h-full object-cover"
-                style={{ maxHeight: "500px" }}
+                style={{ maxHeight: "750px" }}
               />
             </div>
             <div className="grid grid-cols-1 gap-4">
@@ -358,6 +359,11 @@ const Accommodations: React.FC<ContactProps> = ({ setFormData }) => {
                 src={sprinFitMatress2}
                 alt="Springfit Mattress 3"
                 className="rounded-xl shadow-lg w-full h-60 object-cover"
+              />
+               <img
+                src={sprinFitMatress4}
+                alt="Springfit Mattress 3"
+                className="rounded-xl shadow-lg w-full h-60 object-contain bg-[#012839]"
               />
             </div>
           </div>
