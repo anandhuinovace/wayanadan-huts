@@ -1,7 +1,7 @@
 // src/Router.tsx
 import { Routes, Route } from "react-router-dom";
 import Index from "@/pages/Index";
-import FoodMenu from "@/pages/MenuList";
+// import FoodMenu from "@/pages/MenuList";
 import NotFound from "@/pages/NotFound";
 import Gallery from "@/pages/Gallery";
 import AdminLogin from "@/pages/AdminLogin";
@@ -20,7 +20,7 @@ export const AppRouter = () => {
       {/* Public routes using UserLayout */}
       <Route element={<Layout />}>
         <Route path="/" element={<Index />} />
-        <Route path="/menu" element={<FoodMenu />} />
+        {/* <Route path="/menu" element={<FoodMenu />} /> */}
         <Route path="/media" element={<Gallery />} />
           <Route path="/about_wayanad" element={<AboutWyanad />} />
             <Route path="/reach" element={<ReachWayanad />} />

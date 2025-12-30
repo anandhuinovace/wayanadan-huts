@@ -62,7 +62,7 @@ const Navbar = () => {
 
   // Check if the current route is the home page
   const isHomePage = location.pathname === "/";
-  const isMenuPage = location.pathname === "/menu";
+  // const isMenuPage = location.pathname === "/menu";
   const isMediaPage = location.pathname === "/media";
 
   // Determine navbar background based on route and scroll state
@@ -100,7 +100,7 @@ const Navbar = () => {
               label: "Accommodations",
               to: "#accommodations",
             },
-            { id: "experiences", label: "Menus", to: "/menu" },
+            // { id: "experiences", label: "Menus", to: "/menu" },
             { id: "media", label: "Media", to: "/media" },
             { id: "testimonials", label: "Testimonials", to: "#testimonials" },
             { id: "contact", label: "Contact", to: "#contact" },
@@ -111,12 +111,12 @@ const Navbar = () => {
               className={`relative px-2 py-1 text-lg font-medium ${
                 shouldShowTransparent
                   ? activeLink === item.id ||
-                    (item.to === "/menu" && isMenuPage) ||
+                    // (item.to === "/menu" && isMenuPage) ||
                     (item.to === "/media" && isMediaPage)
                     ? "text-emerald-300"
                     : "text-white hover:text-emerald-300"
                   : activeLink === item.id ||
-                    (item.to === "/menu" && isMenuPage) ||
+                    // (item.to === "/menu" && isMenuPage) ||
                     (item.to === "/media" && isMediaPage)
                   ? "text-emerald-600"
                   : "text-gray-700 hover:text-emerald-600"
@@ -135,7 +135,7 @@ const Navbar = () => {
                   shouldShowTransparent ? "bg-emerald-300" : "bg-emerald-600"
                 } transition-all duration-300 ${
                   activeLink === item.id ||
-                  (item.to === "/menu" && isMenuPage) ||
+                  // (item.to === "/menu" && isMenuPage) ||
                   (item.to === "/media" && isMediaPage)
                     ? "w-full"
                     : "w-0 group-hover:w-full"
@@ -182,8 +182,8 @@ const Navbar = () => {
                 label: "Accommodations",
                 to: "#accommodations",
               },
-              { id: "experiences", label: "Menus", to: "/menu" },
-              { id: "media", label: "Media", to: "/media" },
+              // { id: "experiences", label: "Menus", to: "/menu" },
+              // { id: "media", label: "Media", to: "/media" },
               {
                 id: "testimonials",
                 label: "Testimonials",
@@ -196,7 +196,7 @@ const Navbar = () => {
                 to={item.to}
                 className={`text-2xl font-medium py-3 px-4 rounded-lg transition-all ${
                   activeLink === item.id ||
-                  (item.to === "/menu" && isMenuPage) ||
+                  // (item.to === "/menu" && isMenuPage) ||
                   (item.to === "/media" && isMediaPage)
                     ? "bg-emerald-100 text-emerald-700"
                     : "text-gray-700 hover:bg-gray-100"
