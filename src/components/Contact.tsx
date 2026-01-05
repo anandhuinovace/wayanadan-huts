@@ -165,7 +165,7 @@ const Contact: React.FC<ContactProps> = ({ formData, setFormData }) => {
                       href="tel:+919876543210"
                       className="text-emerald-600 hover:text-emerald-700 transition-colors"
                     >
-                      +91 82819 00530 , +91 95395 69263
+                      +91 82819 00530 , 7561872749
                     </a>
                   </div>
                 </motion.div>
