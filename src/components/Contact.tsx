@@ -36,6 +36,8 @@ const Contact: React.FC<ContactProps> = ({ formData, setFormData }) => {
     fetchBookedDates();
   }, []);
 
+  console.log(bookedDates)
+
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement

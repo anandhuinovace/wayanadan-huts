@@ -147,18 +147,56 @@ const AdminEnquirires = () => {
     await fetchEnquiries();
   };
 
-  const getDatesForBooking = (e: any): string[] => {
-    if (!e.checkIn || !e.checkOut) return [];
+const getDatesForBooking = (e: any): string[] => {
+  if (!e.checkIn || !e.checkOut) return [];
 
-    const start = new Date(e.checkIn);
-    const end = new Date(e.checkOut);
+  const start =
+    typeof e.checkIn?.toDate === "function" ? e.checkIn.toDate() : new Date(e.checkIn);
+  const end =
+    typeof e.checkOut?.toDate === "function" ? e.checkOut.toDate() : new Date(e.checkOut);
 
-    const dates = [];
-    for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
-      dates.push(d.toISOString().split("T")[0]);
-    }
-    return dates;
-  };
+  // Create pure date values (local), removing any time offset
+  const startDate = new Date(start.getFullYear(), start.getMonth(), start.getDate());
+  const endDate = new Date(end.getFullYear(), end.getMonth(), end.getDate());
+
+  const dates: string[] = [];
+  const current = new Date(startDate);
+
+  while (current < endDate) {
+    // Format manually to avoid UTC shift
+    const year = current.getFullYear();
+    const month = String(current.getMonth() + 1).padStart(2, "0");
+    const day = String(current.getDate()).padStart(2, "0");
+    dates.push(`${year}-${month}-${day}`);
+    current.setDate(current.getDate() + 1);
+  }
+
+  return dates;
+};
+
+  // const getDatesForBooking = (e: any): string[] => {
+  //   if (!e.checkIn || !e.checkOut) return [];
+
+  //   const start =
+  //     typeof e.checkIn?.toDate === "function" ? e.checkIn.toDate() : e.checkIn;
+  //   const end =
+  //     typeof e.checkOut?.toDate === "function"
+  //       ? e.checkOut.toDate()
+  //       : e.checkOut;
+
+  //   const dates = [];
+  //   const current = new Date(start);
+
+  //   while (current < end) {
+  //     const dateStr = `${current.getFullYear()}-${String(
+  //       current.getMonth() + 1
+  //     ).padStart(2, "0")}-${String(current.getDate()).padStart(2, "0")}`;
+  //     dates.push(dateStr);
+  //     current.setDate(current.getDate() + 1);
+  //   }
+
+  //   return dates;
+  // };
 
   const formatDate = (date: Date | null): string => {
     if (!date) return "-";
