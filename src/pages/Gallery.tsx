@@ -12,7 +12,7 @@ import WayanadanReel from "../assets/videos/wayanadan-reel.mp4";
 import WayanadanView from "../assets/videos/video-full.mp4";
 
 // Dynamically import all images from the folder
-const imageModules = import.meta.glob("@/assets/stay/*.jpg", {
+const imageModules = import.meta.glob("@/assets/stay/*.{jpg,jpeg}", {
   eager: true,
   import: "default",
 });
@@ -58,9 +58,9 @@ const Gallery = () => {
   // Create array of images in correct order (stay1.jpg to stay40.jpg)
   const galleryImages = Array.from({ length: 40 }, (_, i) => {
     const index = i + 1;
-    const imageName = `stay${index}.jpg`;
+    const imageCandidates = [`stay${index}.jpg`, `stay${index}.jpeg`];
     const path = Object.keys(imageModules).find((key) =>
-      key.endsWith(imageName)
+      imageCandidates.some((name) => key.endsWith(name))
     );
     return {
       id: index,

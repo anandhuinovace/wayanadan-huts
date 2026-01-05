@@ -1,9 +1,9 @@
 import { useEffect, useRef } from 'react';
-import fullView from "../assets/living-room.jpeg";
+import fullView from "../assets/stay/stay4.jpeg";
 import TopView from "../assets/wayanadan-sky-view.jpeg";
-import innerOUtView from "../assets/stay/stay26.jpg"
-import innerView from "../assets/stay/stay12.jpg"
-import "./index.css"
+import innerOUtView from "../assets/stay/stay3.jpeg";
+import innerView from "../assets/stay/stay1.jpeg";
+import "./index.css";
 const About = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
 

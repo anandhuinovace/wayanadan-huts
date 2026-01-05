@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight, ChevronDown } from 'lucide-react';
-import Image1 from '@/assets/living-room.jpeg'
+import Image1 from '@/assets/stay/stay4.jpeg';
 import Image2 from '@/assets/wayanadan-sky-view.jpeg';
-import Image3 from '@/assets/guest.jpg';
+import Image3 from '@/assets/stay/stay1.jpeg';
 import { Link } from 'react-router-dom';
 
 const slides = [

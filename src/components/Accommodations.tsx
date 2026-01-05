@@ -13,15 +13,16 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
-// Import images for 1 BHK
-import oneBhkLiving from "./../assets/stay/stay6.jpg";
-import oneBhkBedroom from "./../assets/guest.jpg";
-import oneBhkKitchen from "./../assets/stay/stay1.jpg";
-import oneBhkBathroom from "./../assets/stay/stay2.jpg";
+// Import images for 1 BHK (room, hall, kitchen, bath)
+import oneBhkLiving from "./../assets/stay/stay4.jpeg";
+import oneBhkBedroom from "./../assets/stay/stay1.jpeg";
+import oneBhkKitchen from "./../assets/stay/stay3.jpeg";
+import oneBhkBathroom from "./../assets/stay/stay2.jpeg";
 
-import twoBhkLiving from "./../assets/twobhk-living.jpg";
-import twoBhkDining from "./../assets/twobhk-dining.jpg";
-import twoBhkKitchen from "./../assets/twoBhk-kitchen.jpg";
+// Import images for 2 BHK (hall, room, kitchen)
+import twoBhkLiving from "./../assets/stay/stay10.jpeg";
+import twoBhkDining from "./../assets/stay/stay12.jpeg";
+import twoBhkKitchen from "./../assets/stay/stay14.jpeg";
 
 import sprinFitMatress1 from "./../assets/mattress/img1.jpeg";
 import sprinFitMatress2 from "./../assets/mattress/mattresdetail.jpeg";
@@ -181,7 +182,12 @@ const Accommodations: React.FC<ContactProps> = ({ setFormData }) => {
     discount: string;
   };
 
-  const [rates, setRates] = useState<Record<string, RateType>>({});
+  const manualRateOverrides: Record<string, RateType> = {
+    "1 BHK": { price: "2500", offer: "", discount: "" },
+    "2 BHK": { price: "4000", offer: "", discount: "" },
+  };
+
+  const [rates, setRates] = useState<Record<string, RateType>>(manualRateOverrides);
   useEffect(() => {
     const fetchRates = async () => {
       const snapshot = await getDocs(collection(db, "rates"));
@@ -196,7 +202,7 @@ const Accommodations: React.FC<ContactProps> = ({ setFormData }) => {
         };
       });
 
-      setRates(rateMap);
+      setRates({ ...rateMap, ...manualRateOverrides });
     };
 
     fetchRates();
@@ -235,10 +241,11 @@ const Accommodations: React.FC<ContactProps> = ({ setFormData }) => {
       description:
         "Cozy 1 bedroom apartment with attached bathroom, balcony, and all modern amenities. Perfect for couples or small families.",
       images: [oneBhkLiving, oneBhkBedroom, oneBhkKitchen, oneBhkBathroom],
-      price: rates?.["1 BHK"]?.price ?? "Loading...",
+      price: rates?.["1 BHK"]?.price ?? manualRateOverrides["1 BHK"].price,
       offer: rates?.["1 BHK"]?.offer ?? "",
       discount: rates?.["1 BHK"]?.discount ?? "",
-      capacity: "3 Adults or 2 Adults + 2 Children",
+      capacity:
+        "3 Adults all included (2+ any age; extra bed available per head ₹500)",
       location: "Prime Location",
       delay: "0s",
       features: [
@@ -258,10 +265,11 @@ const Accommodations: React.FC<ContactProps> = ({ setFormData }) => {
       description:
         "Spacious 2 bedroom apartment with one attached bathroom, balcony in master bedroom, and premium amenities for larger groups.",
       images: [twoBhkKitchen, twoBhkDining, twoBhkLiving],
-      price: rates?.["2 BHK"]?.price ?? "Loading...",
+      price: rates?.["2 BHK"]?.price ?? manualRateOverrides["2 BHK"].price,
       offer: rates?.["2 BHK"]?.offer ?? "",
       discount: rates?.["2 BHK"]?.discount ?? "",
-      capacity: "6 Adults or 3 Adults + 4 Children",
+      capacity:
+        "6 Adults all included (2+ any age; extra bed available per head ₹500)",
       location: "Prime Location",
       delay: "0.2s",
       features: [
@@ -312,6 +320,19 @@ const Accommodations: React.FC<ContactProps> = ({ setFormData }) => {
             Experience comfortable living with all modern amenities in our
             well-appointed apartments.
           </p>
+          {/* <div className="max-w-2xl mx-auto mt-6 bg-emerald-50 border border-emerald-200 rounded-2xl p-4 text-left">
+            <p className="text-sm font-semibold text-emerald-900 uppercase tracking-wide">
+              Rates updated on <span className="text-gray-900">05 Jan 2026</span>
+            </p>
+            <div className="mt-3 space-y-2 text-gray-700 text-sm md:text-base">
+              <p>
+                <strong>1 BHK:</strong> ₹2,500 for 3 adults all included (2+ any age; extra bed available per head ₹500)
+              </p>
+              <p>
+                <strong>2 BHK:</strong> ₹4,000 for 6 adults all included (2+ any age; extra bed available per head ₹500)
+              </p>
+            </div>
+          </div> */}
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
