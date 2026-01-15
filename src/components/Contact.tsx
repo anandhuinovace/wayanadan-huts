@@ -162,7 +162,7 @@ const Contact: React.FC<ContactProps> = ({ formData, setFormData }) => {
                   <div>
                     <h4 className="font-bold text-gray-800 mb-1">Call Us</h4>
                     <a
-                      href="tel:+919876543210"
+                      href="tel:+917561872749"
                       className="text-emerald-600 hover:text-emerald-700 transition-colors"
                     >
                       +91 82819 00530 , 7561872749
